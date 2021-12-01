@@ -43,8 +43,12 @@ app.get('/api/members', (req, res) => {
   });
 });
 
-// TODO: Dropdown!
 app.get('/api/teams', (req, res) => {
+  request('http://localhost:3000/teams', (err, response, body) => {
+    if (response.statusCode <= 500) {
+      res.send(body);
+    }
+  });
 
 });
 

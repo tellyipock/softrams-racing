@@ -34,6 +34,7 @@
         </div>
         <!--We may have to make a service call to get this list-->
         <select id="team" class="col-md-6 custom-select">
+          <option value="" disabled selected>Choose a team</option>
           <option *ngFor="let team of teams">{{ team.teamName }}</option>
         </select>
       </div>
