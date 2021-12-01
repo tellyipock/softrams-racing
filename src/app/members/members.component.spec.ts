@@ -1,12 +1,9 @@
 import { async, ComponentFixture, inject, TestBed } from '@angular/core/testing';
-
-import { MembersComponent } from './members.component';
-
-import { Router } from '@angular/router';
-
 import { HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { By } from '@angular/platform-browser';
+import { MembersComponent } from './members.component';
 
 describe('MembersComponent', () => {
   let component: MembersComponent;
@@ -15,7 +12,10 @@ describe('MembersComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [MembersComponent],
-      imports: [HttpClientModule, RouterModule],
+      imports: [
+        HttpClientModule,
+        RouterModule
+      ],
       providers: [
         {
           provide: Router,
@@ -37,6 +37,13 @@ describe('MembersComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('#goToAddMemberForm should route to member-details', inject([Router], (router: Router) => {
+    component.goToAddMemberForm();
+    fixture.detectChanges();
+    expect(router.navigate).toHaveBeenCalledWith(['/member-details']);
+  }));
+
+  /* Testing the template */
   it('addMemberButton should call goToAddMemberForm function when clicked', () => {
     let btn = fixture.debugElement.query(By.css('#addMemberButton'));
     spyOn(component, 'goToAddMemberForm');
@@ -44,11 +51,5 @@ describe('MembersComponent', () => {
     fixture.detectChanges();
     expect(component.goToAddMemberForm).toHaveBeenCalled();
 
-  })
-
-  it('#goToAddMemberForm should route to member-details', inject([Router], (router: Router) => {
-    component.goToAddMemberForm();
-    fixture.detectChanges();
-    expect(router.navigate).toHaveBeenCalledWith(['/member-details']);
-  }));
+  });
 });

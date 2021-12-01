@@ -28,9 +28,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
   constructor(private fb: FormBuilder, private appService: AppService, private router: Router) {}
 
   ngOnInit() {
-    console.log('haha')
     this.appService.getTeams().subscribe((result) => {
-      console.log('getTeams', result);
       this.teams = result;
     })
   }
