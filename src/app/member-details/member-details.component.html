@@ -1,9 +1,12 @@
 <div class="container-fluid col-md-6">
   <h3 class="text-center lead">Add Member to Racing Team</h3>
   <br />
+  <div *ngIf="alertMessage" class="alert alert-warning" role="alert">
+    {{ alertMessage }}
+  </div>
   <!--Template Driven Form or Model Driven Form?-->
-  <form (ngSubmit)="onSubmit(memberForm)">
-    <div>
+  <form *ngIf="!loading" [formGroup]="memberForm" (ngSubmit)="onSubmit(memberForm)">
+    <fieldset>
       <div class="row">
         <div class="col-md-6">
           <input
@@ -11,6 +14,7 @@
             class="form-control"
             id="firstName"
             placeholder="First Name"
+            formControlName="firstName"
           />
         </div>
         <div class="col-md-6">
@@ -19,6 +23,7 @@
             class="form-control"
             id="lastName"
             placeholder="Last Name"
+            formControlName="lastName"
           />
         </div>
       </div>
@@ -30,28 +35,38 @@
             class="form-control"
             id="jobTitle"
             placeholder="Job Title"
+            formControlName="jobTitle"
           />
         </div>
-        <!--We may have to make a service call to get this list-->
-        <select id="team" class="col-md-6 custom-select">
-          <option value="" disabled selected>Choose a team</option>
-          <option *ngFor="let team of teams">{{ team.teamName }}</option>
-        </select>
+        <div class="col-md-6">
+          <input *ngIf="(editMode === false) && (memberForm.disabled); else dropDown"
+            type="text"
+            class="form-control"
+            [value]="memberForm.controls.team.value"
+            disabled
+          />
+          <ng-template #dropDown>
+            <select id="team" class="custom-select" formControlName="team">
+              <option value="" disabled selected>Choose a team</option>
+              <option *ngFor="let team of teams" [value]="team">{{ team.teamName }}</option>
+            </select>
+          </ng-template>
+        </div>
       </div>
       <br />
       <div class="form-group col-md-6">
         <div class="row">
           <label id="activeStatus" class="md-check lead">
-            <input type="radio" value="Active" name="status" /> Active
+            <input type="radio" value="Active" name="status" formControlName="status" /> Active
           </label>
           <label class="md-check lead">
-            <input type="radio" value="Inactive" name="status" /> Inactive
+            <input type="radio" value="Inactive" name="status" formControlName="status" /> Inactive
           </label>
         </div>
       </div>
-    </div>
+    </fieldset>
     <!--Disable if form is invalid-->
-    <button type="submit" class="btn btn-primary pull-right">
+    <button type="submit" [disabled]="!memberForm.valid" class="btn btn-primary pull-right">
       Save Member
     </button>
   </form>

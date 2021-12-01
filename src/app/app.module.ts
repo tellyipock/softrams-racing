@@ -26,7 +26,7 @@ const ROUTES = [
     component: MembersComponent
   },
   {
-    path: 'member-details/:id',
+    path: 'member-details',
     component: MemberDetailsComponent
   },
   {

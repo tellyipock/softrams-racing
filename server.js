@@ -49,12 +49,11 @@ app.get('/api/teams', (req, res) => {
       res.send(body);
     }
   });
-
 });
+
 
 // Submit Form!
 app.post('/api/addMember', (req, res) => {
-
 });
 
 app.get('*', (req, res) => {

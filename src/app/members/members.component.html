@@ -13,8 +13,16 @@
     </thead>
     <tbody>
       <tr *ngFor='let member of members'>
-        <td><a [routerLink]="['/member-details', member?.id]">{{member?.id}}</a></td>
-        <td>{{member?.firstName}}</td>
+        <td>
+          <button type="button" class="btn btn-link"
+            (click)="openMemberPage(member)">{{member?.id}}
+          </button>
+        </td>
+        <td>
+          <button type="button" class="btn btn-link"
+            (click)="openMemberPage(member)">{{member?.firstName}}
+          </button>
+        </td>
         <td>{{member?.lastName}}</td>
         <td>{{member?.jobTitle}}</td>
         <td>{{member?.team}}</td>
