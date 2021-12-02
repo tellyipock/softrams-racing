@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Member } from './app.interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppService {
   api = 'http://localhost:8000/api';
+  httpOptions = {
+    headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+        , 'X-Requested-With': 'XMLHttpRequest'
+    })
+  };
   username: string;
 
   constructor(private http: HttpClient) {}
@@ -19,11 +26,16 @@ export class AppService {
       .pipe(catchError(this.handleError));
   }
 
-  setUsername(name: string): void {
+  setUsername(name: string) {
     this.username = name;
   }
 
-  addMember(memberForm) {}
+  addMember(member: Member) {
+    console.log('service addMember');
+    return this.http
+      .post(`${this.api}/addMember`, member, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
 
   getTeams() {
     return this.http

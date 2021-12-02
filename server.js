@@ -51,9 +51,22 @@ app.get('/api/teams', (req, res) => {
   });
 });
 
-
-// Submit Form!
 app.post('/api/addMember', (req, res) => {
+  const member = JSON.stringify(req.body);
+  const httpOptions = {
+    url: 'http://localhost:3000/members',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'},
+    body: member
+  };
+  request(httpOptions, (err, response, body) => {
+    console.log('response: body:', response.body);
+    console.log('response: status:', response.statusCode)
+    if (response.statusCode <= 500) {
+      res.status(200).send({'SUCCESS': true});
+    }
+  });
 });
 
 app.get('*', (req, res) => {
