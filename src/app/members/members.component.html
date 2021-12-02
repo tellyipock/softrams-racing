@@ -1,8 +1,18 @@
-<div class="container-fluid">
-  <button id="add" class="btn btn-primary pull-right"
-    (click)="openMemberDetails('ADD')">
-    Add Member
-  </button>
+<div class="container-fluid members-wrapper">
+  <div class="row">
+    <div class="col-md-8">
+      <p *ngIf="alertMessage" class="alert alert-warning" role="alert">
+        {{ alertMessage }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <button id="add" class="btn btn-primary mb-4 pull-right"
+        (click)="openMemberDetails('ADD')">
+        Add Member
+      </button>
+    </div>
+  </div>
+  
   <table class="table">
     <thead>
       <tr>

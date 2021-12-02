@@ -1,5 +1,3 @@
-#addMemberButton {
-  margin-bottom: 10px;
+.members-wrapper {
+  max-width: 1200px;
 }
-
-

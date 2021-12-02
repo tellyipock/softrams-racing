@@ -9,6 +9,15 @@ describe('MembersComponent', () => {
   let component: MembersComponent;
   let fixture: ComponentFixture<MembersComponent>;
 
+  const mockMember = {
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "jobTitle": "Driver",
+    "team": "Formula 1 - Car 77",
+    "status": "Active"
+  };
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [MembersComponent],
@@ -18,13 +27,14 @@ describe('MembersComponent', () => {
       ],
       providers: [
         {
-          provide: Router,
-          useClass: class {
+          provide: Router, useClass: class {
             navigateByUrl = jasmine.createSpy('navigateByUrl');
           }
         }
       ]
     }).compileComponents();
+
+    window.history.pushState({ message: 'Add member success!' }, '', '');
   }));
 
   beforeEach(() => {
@@ -38,10 +48,9 @@ describe('MembersComponent', () => {
   });
 
   it('#openMemberDetails should route to member-details', inject([Router], (router: Router) => {
-    component.openMemberDetails('ADD');
-    fixture.detectChanges();
+    component.openMemberDetails('ADD', mockMember);
     expect(router.navigateByUrl).toHaveBeenCalledWith('/member-details',
-      { state: { action: 'ADD', member: undefined } });
+      { state: { action: 'ADD', member: mockMember } });
   }));
 
   /* Testing the template */
