@@ -1,5 +1,9 @@
 <div class="container-fluid">
-  <button id="addMemberButton" class="btn btn-primary pull-right" (click)="goToAddMemberForm()">Add Member</button>
+  <button id="addMemberButton"
+    class="btn btn-primary pull-right"
+    (click)="openMemberDetails('ADD')">
+    Add Member
+  </button>
   <table class="table">
     <thead>
       <tr>
@@ -9,24 +13,39 @@
         <th>Job Title</th>
         <th>Racing Team</th>
         <th>Status</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor='let member of members'>
         <td>
           <button type="button" class="btn btn-link"
-            (click)="openMemberPage(member)">{{member?.id}}
+            (click)="openMemberDetails('READ', member)">
+            {{member?.id}}
           </button>
         </td>
         <td>
           <button type="button" class="btn btn-link"
-            (click)="openMemberPage(member)">{{member?.firstName}}
+            (click)="openMemberDetails('READ', member)">
+            {{member?.firstName}}
           </button>
         </td>
         <td>{{member?.lastName}}</td>
         <td>{{member?.jobTitle}}</td>
         <td>{{member?.team}}</td>
         <td>{{member?.status}}</td>
+        <td>
+          <button
+            class="btn btn-primary mr-2"
+            (click)="openMemberDetails('EDIT')">
+            Edit
+          </button>
+          <button
+            class="btn btn-danger"
+            (click)="openMemberDetails('DELETE')">
+            Delete
+          </button>
+        </td>
       </tr>
     </tbody>
   </table>

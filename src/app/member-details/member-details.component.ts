@@ -18,6 +18,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
   alertMessage: String;
   teams = [];
   member: Member | undefined;
+  title: string | undefined;
   editMode: boolean = false;
   routerParams: { member?: Member } = {};
   loading: boolean = false;
@@ -40,7 +41,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
           this.displayForm();
         }
         else {
-          this.alertMessage = 'Error getting teams list. Refresh and try again.'
+          this.alertMessage = 'Error getting data. Refresh and try again.'
         }
         this.loading = false;
     });
@@ -61,6 +62,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
     if(this.routerParams.member) {
       // Display member info on the page and set to read only
       this.member = this.routerParams.member;
+      this.title = `Member Detail ${this.member.firstName} ${this.member.lastName}`;
       this.memberForm.patchValue(this.member);
       this.memberForm.disable();
     }

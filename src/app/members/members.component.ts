@@ -13,24 +13,12 @@ export class MembersComponent implements OnInit {
   constructor(public appService: AppService, private router: Router) {}
 
   ngOnInit(): void {
-    this.appService.getMembers().subscribe(members => (this.members = members));
+    this.appService.getMembers()
+      .subscribe(members => (this.members = members));
   }
 
-  goToAddMemberForm(): void {
-    this.router.navigate(['member-details']);
+  openMemberDetails(action: string, member?: Member): void {
+    this.router.navigateByUrl('/member-details',
+      { state: { 'action': action, 'member': member } });
   }
-
-  openMemberPage(member: Member): void {
-    console.log('openMemberPage, member', member);
-    this.router.navigateByUrl('/member-details'
-      , { state: { 'member': member } });
-  }
-
-  editMemberByID(memberID: number): void {
-    if(memberID) {
-      this.router.navigate(['member-details', { id: memberID }]);
-    }
-  }
-
-  deleteMemberById(id: number) {}
 }
