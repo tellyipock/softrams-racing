@@ -26,6 +26,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.loading = true;
+    this.initiateForm();
     this.appService.getTeams()
       .subscribe((teams) => {
         if(teams) {
@@ -43,10 +44,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
 
   ngOnChanges() {}
 
-
-  displayForm(): void {
-    this.editMode = false;
-    console.log('displayForm, params: ', this.routerParams);
+  initiateForm() {
     this.memberForm = new FormGroup({
       firstName: new FormControl('', [ Validators.required ])
       , lastName: new FormControl('', [ Validators.required ])
@@ -54,6 +52,11 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
       , team: new FormControl('', [ Validators.required ])
       , status: new FormControl('', [ Validators.required ])
     });
+  }
+
+  displayForm(): void {
+    this.editMode = false;
+    console.log('displayForm, params: ', this.routerParams);
 
     if(!this.routerParams.action) {
       this.alertMessage = 'No action found.';

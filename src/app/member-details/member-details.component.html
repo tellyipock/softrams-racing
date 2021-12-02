@@ -4,8 +4,8 @@
       <h3 *ngIf="title" class="my-4 lead">{{ title }}</h3>
     </div>
     <div class="col-md-4">
-      <button id="back" role="button" class="mt-2 btn btn-primary pull-right back-button">
-        <a routerLink="/members">Back to Member List</a>
+      <button routerLink="/members" id="back"
+        class="mt-2 btn btn-primary pull-right back-button">Back to Member List
       </button>
     </div>
   </div>
@@ -73,15 +73,16 @@
         </div>
       </div>
     </fieldset>
-    <!--Disable if form is invalid-->
+    
     <div class="row mt-2">
       <div class="col-md-8">
         <p *ngIf="alertMessage" class="alert alert-warning" role="alert">
           {{ alertMessage }}
         </p>
       </div>
+      <!--Disable if form is invalid-->
       <div class="col-md-4">
-        <button type="submit" [disabled]="!memberForm.valid" class="btn btn-primary mt-2 pull-right">
+        <button type="submit" id="save" [disabled]="!memberForm.valid" class="btn btn-primary mt-2 pull-right">
           Save Member
         </button>
       </div>

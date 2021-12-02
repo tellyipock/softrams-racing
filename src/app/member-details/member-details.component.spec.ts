@@ -1,7 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Location } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MemberDetailsComponent } from './member-details.component';
 
 // Bonus points!
@@ -20,15 +22,17 @@ describe('MemberDetailsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [MemberDetailsComponent],
+      declarations: [ MemberDetailsComponent ],
       imports: [
         FormsModule,
         ReactiveFormsModule,
         HttpClientTestingModule,
-        RouterTestingModule
+        RouterTestingModule.withRoutes([
+          { path: 'members', component: MemberDetailsComponent }
+         ])
       ],
       providers: [
-        FormBuilder
+        Location
       ]
     }).compileComponents();
   }));
@@ -41,6 +45,30 @@ describe('MemberDetailsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('Reactive form', () => {
+    it('CHECK the initial values for memberForm', () => {
+      const formGroup = component.memberForm;
+      const initialForm = {
+        firstName: '',
+        lastName: '',
+        jobTitle: '',
+        team: '',
+        status: ''
+      };
+      expect(component.memberForm.value).toEqual(initialForm);
+    });
+
+    it('TEST the form group element count', () => {
+      component.loading = false;
+      component.memberForm.patchValue(mockMember);
+      fixture.detectChanges();
+      const memberForm = document.getElementById('#memberForm');
+      const inputs = memberForm.querySelectorAll('input');
+      expect(inputs.length).toEqual(6);
+    });
+
   });
 
   describe('#displayForm', () => {
@@ -110,5 +138,43 @@ describe('MemberDetailsComponent', () => {
       expect(component.editMode).toBeFalsy();
       expect(component.alertMessage).toEqual('No member found.');
     });
+  });
+
+  /* Test template */
+  it('Back to Member List button should exist', () => {
+    let btn = fixture.debugElement.query(By.css('#back'));
+    const btnText = btn.nativeElement.textContent;
+    expect(btnText.trim()).toEqual('Back to Member List');
+  });
+
+  it('Back to Member List button should route to /members', inject([Location], (location) => {
+    let btn = fixture.debugElement.query(By.css('#back'));   
+    btn.nativeElement.click();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(location.path()).toBe('/members');
+    });
+  }));
+
+  it('form does not displays if loading flag is true', () => {
+    component.loading = true;
+    fixture.detectChanges();
+    let formElm = fixture.debugElement.query(By.css('form'));
+    expect(formElm).toBeNull();
+  });
+
+  it('form displays if loading flag is false', () => {
+    component.loading = false;
+    fixture.detectChanges();
+    let formElm = fixture.debugElement.query(By.css('form'));
+    expect(formElm.queryAll.length).toEqual(1);
+  });
+
+  it('Save Member List button should exist', () => {
+    component.loading = false;
+    fixture.detectChanges();
+    let btn = fixture.debugElement.query(By.css('#save'));
+    const btnText = btn.nativeElement.textContent;
+    expect(btnText.trim()).toEqual('Save Member');
   });
 });
