@@ -61,13 +61,38 @@ app.post('/api/addMember', (req, res) => {
     body: member
   };
   request(httpOptions, (err, response, body) => {
-    console.log('response: body:', response.body);
-    console.log('response: status:', response.statusCode)
     if (response.statusCode <= 500) {
       res.status(200).send({'SUCCESS': true});
     }
   });
 });
+
+app.post('/api/editMember', (req, res) => {
+  const memberID = req.body.id;
+  if (isNaN(memberID)) {
+    res.status(200).send({
+      'SUCCESS': false,
+      'ERROR': 'Member ID not found'
+    });
+  }
+  else {
+    const member = JSON.stringify(req.body);
+    const httpOptions = {
+      url: `http://localhost:3000/members/${memberID}`,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'},
+      body: member
+    };
+    request(httpOptions, (err, response, body) => {
+      if (response.statusCode <= 500) {
+        res.status(200).send({'SUCCESS': true});
+      }
+    });
+  }
+  
+});
+
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/softrams-racing/index.html'));

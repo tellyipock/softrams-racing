@@ -31,9 +31,14 @@ export class AppService {
   }
 
   addMember(member: Member) {
-    console.log('service addMember');
     return this.http
       .post(`${this.api}/addMember`, member, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
+  editMember(member: Member) {
+    return this.http
+      .post(`${this.api}/editMember`, member, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 
