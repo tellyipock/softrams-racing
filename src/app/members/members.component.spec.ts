@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { MembersComponent } from './members.component';
 
-fdescribe('MembersComponent', () => {
+describe('MembersComponent', () => {
   let component: MembersComponent;
   let fixture: ComponentFixture<MembersComponent>;
 

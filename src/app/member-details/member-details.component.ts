@@ -1,9 +1,8 @@
 import { Component, OnInit, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { forkJoin, Observable, of } from 'rxjs';
 import { AppService } from '../app.service';
-import { Member } from '../app.interfaces';
+import { Member, RouterParams } from '../app.interfaces';
+import { GlobalConstants } from '../global-constants';
 
 @Component({
   selector: 'app-member-details',
@@ -17,17 +16,17 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
   alertType: String;
   alertMessage: String;
   teams = [];
-  member: Member | undefined;
-  title: string | undefined;
+  member: Member;
+  title: string;
   editMode: boolean = false;
-  routerParams: { member?: Member } = {};
+  routerParams: RouterParams;
   loading: boolean = false;
+  action: string = GlobalConstants.Action.Read;
+  selectedTeam: string = '';
 
   constructor(
     private fb: FormBuilder,
     private appService: AppService,
-    private router: Router,
-    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -59,19 +58,50 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
       , team: new FormControl('', [ Validators.required ])
       , status: new FormControl('', [ Validators.required ])
     });
-    if(this.routerParams.member) {
-      // Display member info on the page and set to read only
-      this.member = this.routerParams.member;
-      this.title = `Member Detail ${this.member.firstName} ${this.member.lastName}`;
-      this.memberForm.patchValue(this.member);
-      this.memberForm.disable();
+    if(this.routerParams.action) {
+      this.action = this.routerParams.action;
+      switch(this.action) {
+        case GlobalConstants.Action.Add:
+          // Clear form and set it to editable
+          this.title = 'Add a Member to Racing Team';
+          this.editMode = true;
+          this.memberForm.enable();
+          this.memberForm.reset();  
+          break;
+        case GlobalConstants.Action.Edit:
+          this.member = this.routerParams.member;
+          if(this.member) {
+            this.title = `Edit Member ${this.member.firstName} ${this.member.lastName}`;
+            this.editMode = true;
+            this.memberForm.enable();
+            this.memberForm.patchValue(this.member);
+            this.selectedTeam = this.member.team;
+          }
+          else {
+            this.alertMessage = 'No member found.';
+          }
+          break;
+        default:
+          // Display member info on the page and set to read only
+          this.member = this.routerParams.member;
+          if(this.member) {
+            this.title = `Member Detail ${this.member.firstName} ${this.member.lastName}`;
+            this.editMode = false;
+            this.memberForm.patchValue(this.member);
+            this.memberForm.disable();
+          }
+          else {
+            this.alertMessage = 'No member found.';
+          }
+          break;
+      }
+      
     }
     else {
-      console.log('No member found in router params');
-      this.editMode = true;
-      this.memberForm.enable();
+      this.alertMessage = 'No member found.';
+      this.editMode = false;
+      this.memberForm.disable();
     }
-    
   }
 
 

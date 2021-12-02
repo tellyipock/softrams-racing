@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MemberDetailsComponent } from './member-details.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';

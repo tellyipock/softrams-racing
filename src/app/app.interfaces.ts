@@ -5,3 +5,8 @@ export interface Member {
     team: string;
     status: string;
 }
+
+export interface RouterParams {
+    action: string;
+    member?: Member;
+}

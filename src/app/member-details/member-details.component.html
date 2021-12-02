@@ -39,7 +39,7 @@
           />
         </div>
         <div class="col-md-6">
-          <input *ngIf="(editMode === false) && (memberForm.disabled); else dropDown"
+          <input *ngIf="action === 'READ'; else dropDown"
             type="text"
             class="form-control"
             [value]="memberForm.controls.team.value"
@@ -47,8 +47,10 @@
           />
           <ng-template #dropDown>
             <select id="team" class="custom-select" formControlName="team">
-              <option value="" disabled selected>Choose a team</option>
-              <option *ngFor="let team of teams" [value]="team">{{ team.teamName }}</option>
+              <option>{{ selectedTeam }}</option>
+              <option *ngFor="let option of teams" >
+                {{ option.teamName }}
+              </option>
             </select>
           </ng-template>
         </div>
