@@ -45,6 +45,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
 
 
   displayForm(): void {
+    this.editMode = false;
     console.log('displayForm, params: ', this.routerParams);
     this.memberForm = new FormGroup({
       firstName: new FormControl('', [ Validators.required ])
@@ -53,7 +54,12 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
       , team: new FormControl('', [ Validators.required ])
       , status: new FormControl('', [ Validators.required ])
     });
-    if(this.routerParams.action) {
+
+    if(!this.routerParams.action) {
+      this.alertMessage = 'No action found.';
+      this.memberForm.disable();
+    }
+    else {
       this.action = this.routerParams.action;
       switch(this.action) {
         case GlobalConstants.Action.Add:
@@ -80,8 +86,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
           // Display member info on the page and set to read only
           this.member = this.routerParams.member;
           if(this.member) {
-            this.title = `Member Detail ${this.member.firstName} ${this.member.lastName}`;
-            this.editMode = false;
+            this.title = `Member Detail: ${this.member.firstName} ${this.member.lastName}`;
             this.memberForm.patchValue(this.member);
             this.memberForm.disable();
           }
@@ -90,12 +95,6 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
           }
           break;
       }
-      
-    }
-    else {
-      this.alertMessage = 'No member found.';
-      this.editMode = false;
-      this.memberForm.disable();
     }
   }
 
@@ -103,15 +102,41 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
 
   // TODO: Add member to members
   onSubmit(form: FormGroup) {
-    this.member = form.value;
-    console.log('saved member: ', this.member);
+    let memberData = form.value;
+    console.log('saved member: ', memberData);
     if(this.action === GlobalConstants.Action.Add) {
-      this.appService.addMember(this.member)
-      .subscribe((result) => {
-        console.log(result);
-        this.router.navigateByUrl('/members',
-          { state: { 'action': this.action, 'result': result } });
-      });
+      this.appService.addMember(memberData)
+        .subscribe((result) => {
+          this.goHome(result, this.action);
+        });
     }
+    else if(this.action === GlobalConstants.Action.Edit) {
+      memberData.id = this.member.id;
+      this.appService.editMember(memberData)
+        .subscribe((result) => {
+          this.goHome(result, this.action);
+        });
+    }
+  }
+
+  goHome(result, action) {
+    let msg = '';
+    if(result.SUCCESS) {
+      if(action === GlobalConstants.Action.Add) {
+        msg = `Member ${this.member.firstName} ${this.member.lastName} successfully added.`;
+      }
+      else if (action === GlobalConstants.Action.Edit) {
+        msg = `Member ${this.member.firstName} ${this.member.lastName} successfully updated.`;
+      }
+    }
+    else {
+      if(action === GlobalConstants.Action.Add) {
+        msg = 'Add member failed. Please try again.';
+      }
+      else if (action === GlobalConstants.Action.Edit) {
+        msg = 'Edit member failed. Please try again.';
+      }
+    }
+    this.router.navigateByUrl('/members', { state: { message: msg } });
   }
 }

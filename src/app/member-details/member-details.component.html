@@ -9,8 +9,9 @@
       </button>
     </div>
   </div>
-  <!--Template Driven Form or Model Driven Form?-->
-  <form *ngIf="!loading" [formGroup]="memberForm" (ngSubmit)="onSubmit(memberForm)">
+  <!-- Reactive Form -->
+  <form *ngIf="!loading" id="#memberForm" [formGroup]="memberForm"
+    (ngSubmit)="onSubmit(memberForm)">
     <fieldset>
       <div class="row">
         <div class="col-md-6">
@@ -74,8 +75,10 @@
     </fieldset>
     <!--Disable if form is invalid-->
     <div class="row mt-2">
-      <div class="col-md-8 alert alert-warning" role="alert">
-        <p *ngIf="alertMessage">{{ alertMessage }}</p>
+      <div class="col-md-8">
+        <p *ngIf="alertMessage" class="alert alert-warning" role="alert">
+          {{ alertMessage }}
+        </p>
       </div>
       <div class="col-md-4">
         <button type="submit" [disabled]="!memberForm.valid" class="btn btn-primary mt-2 pull-right">
