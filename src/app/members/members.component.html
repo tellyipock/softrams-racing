@@ -1,6 +1,5 @@
 <div class="container-fluid">
-  <button id="addMemberButton"
-    class="btn btn-primary pull-right"
+  <button id="add" class="btn btn-primary pull-right"
     (click)="openMemberDetails('ADD')">
     Add Member
   </button>
@@ -35,14 +34,12 @@
         <td>{{member?.team}}</td>
         <td>{{member?.status}}</td>
         <td>
-          <button
-            class="btn btn-primary mr-2"
-            (click)="openMemberDetails('EDIT')">
+          <button id="edit" class="btn btn-primary mr-2"
+            (click)="openMemberDetails('EDIT', member)">
             Edit
           </button>
-          <button
-            class="btn btn-danger"
-            (click)="openMemberDetails('DELETE')">
+          <button id="delete" class="btn btn-danger"
+            (click)="openMemberDetails('DELETE', member)">
             Delete
           </button>
         </td>
