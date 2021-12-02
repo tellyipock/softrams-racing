@@ -1,15 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { FormsModule, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MemberDetailsComponent } from './member-details.component';
-import { FormBuilder } from '@angular/forms';
-
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 
 // Bonus points!
 describe('MemberDetailsComponent', () => {
@@ -22,18 +15,11 @@ describe('MemberDetailsComponent', () => {
       imports: [
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule,
-        RouterModule
+        HttpClientTestingModule,
+        RouterTestingModule
       ],
       providers: [
-        HttpClient,
-        FormBuilder,
-        {
-          provide: Router,
-          useClass: class {
-            navigate = jasmine.createSpy('navigate');
-          }
-        }
+        FormBuilder
       ]
     }).compileComponents();
   }));

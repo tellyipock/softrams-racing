@@ -1,5 +1,6 @@
 import { Component, OnInit, OnChanges } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AppService } from '../app.service';
 import { Member, RouterParams } from '../app.interfaces';
 import { GlobalConstants } from '../global-constants';
@@ -10,11 +11,8 @@ import { GlobalConstants } from '../global-constants';
   styleUrls: ['./member-details.component.css']
 })
 export class MemberDetailsComponent implements OnInit, OnChanges {
-  memberModel: Member;
   memberForm: FormGroup;
-  submitted = false;
-  alertType: String;
-  alertMessage: String;
+  alertMessage: string;
   teams = [];
   member: Member;
   title: string;
@@ -24,10 +22,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
   action: string = GlobalConstants.Action.Read;
   selectedTeam: string = '';
 
-  constructor(
-    private fb: FormBuilder,
-    private appService: AppService,
-  ) {}
+  constructor(private appService: AppService, private router: Router) {}
 
   ngOnInit() {
     this.loading = true;
@@ -108,6 +103,15 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
 
   // TODO: Add member to members
   onSubmit(form: FormGroup) {
-    this.memberModel = form.value;
+    this.member = form.value;
+    console.log('saved member: ', this.member);
+    if(this.action === GlobalConstants.Action.Add) {
+      this.appService.addMember(this.member)
+      .subscribe((result) => {
+        console.log(result);
+        this.router.navigateByUrl('/members',
+          { state: { 'action': this.action, 'result': result } });
+      });
+    }
   }
 }
