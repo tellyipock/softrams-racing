@@ -9,12 +9,12 @@
       "id": 1
     },
     {
-      "id": 2,
       "firstName": "Alex",
       "lastName": "Sainz",
       "jobTitle": "Driver",
       "team": "Formula 1 - Car 78",
-      "status": "Active"
+      "status": "Active",
+      "id": 2
     },
     {
       "id": 3,
@@ -47,20 +47,12 @@
       "team": "Formula 2 - Car 63",
       "status": "Active",
       "id": 6
-    },
-    {
-      "firstName": "test1",
-      "lastName": "test2",
-      "jobTitle": "test3",
-      "team": "Formula 2 - Car 54",
-      "status": "Active",
-      "id": 7
     }
   ],
   "teams": [
     {
       "id": 1,
-      "teamNameName": "Formula 1 - Car 77"
+      "teamName": "Formula 1 - Car 77"
     },
     {
       "id": 2,

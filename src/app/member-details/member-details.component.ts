@@ -101,7 +101,30 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
     }
   }
 
+  deleteMember(member: Member): void {
+    if(!isNaN(member.id)) {
+      const msg = `Are you sure you want to delete ${member.firstName} ${member.lastName}?`;
+      if(confirm(msg)) {
+        this.appService.deleteMember(member.id)
+          .subscribe(result => {
+            if(result.SUCCESS) {
+              this.goHome(result, GlobalConstants.Action.Delete, member);
+            }
+            else {
+              this.alertMessage = `Delete failed. Please try again.`;
+            }
+          })
+      }
+    }
+  }
 
+  editMember(member: Member): void {
+    this.member = member;
+    this.title = `Edit Member ${member.firstName} ${member.lastName}`;
+    this.editMode = true;
+    this.memberForm.enable();
+    this.selectedTeam = this.member.team;
+  }
 
   // TODO: Add member to members
   onSubmit(form: FormGroup) {
@@ -131,6 +154,9 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
       }
       else if (action === GlobalConstants.Action.Edit) {
         msg = `Member ${member.firstName} ${member.lastName} successfully updated.`;
+      }
+      else if (action === GlobalConstants.Action.Delete) {
+        msg = `Member ${member.firstName} ${member.lastName} successfully deleted.`;
       }
     }
     else {

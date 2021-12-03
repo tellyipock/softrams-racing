@@ -1,7 +1,8 @@
 <div class="container-fluid col-md-6 mb-4">
+  <h3 *ngIf="title" class="my-4 text-center lead">{{ title }}</h3>
   <div class="row mb-4">
     <div class="col-md-8">
-      <h3 *ngIf="title" class="my-4 lead">{{ title }}</h3>
+      <app-message [message]="alertMessage"></app-message>
     </div>
     <div class="col-md-4">
       <button routerLink="/members" id="back"
@@ -14,7 +15,7 @@
     (ngSubmit)="onSubmit(memberForm)">
     <fieldset>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 mb-4">
           <input
             type="text"
             class="form-control"
@@ -23,7 +24,7 @@
             formControlName="firstName"
           />
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 mb-4">
           <input
             type="text"
             class="form-control"
@@ -33,9 +34,8 @@
           />
         </div>
       </div>
-      <br />
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 mb-4">
           <input
             type="text"
             class="form-control"
@@ -44,7 +44,7 @@
             formControlName="jobTitle"
           />
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 mb-4">
           <input *ngIf="action === 'READ'; else dropDown"
             type="text"
             class="form-control"
@@ -74,16 +74,20 @@
       </div>
     </fieldset>
     
-    <div class="row mt-2">
-      <div class="col-md-8">
-        <app-message [message]="alertMessage"></app-message>
-      </div>
+    <div class="row mt-2 button-group">
       <!--Disable if form is invalid-->
-      <div class="col-md-4">
-        <button type="submit" id="save" [disabled]="!memberForm.valid" class="btn btn-primary mt-2 pull-right">
+      <button type="submit" id="save" [disabled]="!memberForm.valid || memberForm.pristine"
+          class="btn btn-primary">
           Save Member
-        </button>
-      </div>
+      </button>
+      <button id="edit" *ngIf="(action === 'READ') && member" (click)="editMember(member)"
+        class="btn btn-Info ml-2">
+        Edit Member
+      </button>
+      <button id="delete" *ngIf="(action !== 'ADD') && member" (click)="deleteMember(member)"
+        class="btn btn-danger ml-2">
+        Delete Member
+      </button>
     </div>
   </form>
 </div>

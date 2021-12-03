@@ -5,6 +5,7 @@ import { Location } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MemberDetailsComponent } from './member-details.component';
+import { MessageComponent } from '../shared/message/message.component';
 
 // Bonus points!
 describe('MemberDetailsComponent', () => {
@@ -22,7 +23,7 @@ describe('MemberDetailsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MemberDetailsComponent ],
+      declarations: [ MemberDetailsComponent, MessageComponent ],
       imports: [
         FormsModule,
         ReactiveFormsModule,

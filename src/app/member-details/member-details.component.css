@@ -5,3 +5,9 @@
 .back-button a {
   color: #FFFFFF;
 }
+
+.button-group {
+  position: absolute;
+  right: 0;
+  
+}

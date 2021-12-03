@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { MembersComponent } from './members.component';
+import { MessageComponent } from '../shared/message/message.component';
 
 describe('MembersComponent', () => {
   let component: MembersComponent;
@@ -20,7 +21,7 @@ describe('MembersComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [MembersComponent],
+      declarations: [ MembersComponent, MessageComponent ],
       imports: [
         HttpClientModule,
         RouterModule
