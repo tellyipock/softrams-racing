@@ -13,7 +13,6 @@ describe('MemberDetailsComponent', () => {
   let fixture: ComponentFixture<MemberDetailsComponent>;
 
   const mockMember = {
-    "id": 1,
     "firstName": "John",
     "lastName": "Doe",
     "jobTitle": "Driver",
@@ -47,6 +46,36 @@ describe('MemberDetailsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('TEST ngOnInit', async(() => {
+
+  }));
+
+  it('TEST #editMember', () => {
+    expect(component.member).toBeUndefined();
+    expect(component.action).toEqual('READ');
+    expect(component.editMode).toBeFalsy();
+    expect(component.title).toBeUndefined();
+    expect(component.selectedTeam).toEqual('');
+    component.memberForm.disable();
+    expect(component.memberForm.enabled).toBeFalsy();
+
+    component.editMember(mockMember);
+    expect(component.member).toEqual(mockMember);
+    expect(component.action).toEqual('EDIT');
+    expect(component.editMode).toBeTruthy();
+    expect(component.title).toEqual('Edit Member John Doe');
+    expect(component.selectedTeam).toEqual(mockMember.team);
+    expect(component.memberForm.enabled).toBeTruthy();
+  });
+
+  it('TEST #deleteMember', () => {
+
+  });
+
+  it('TEST #onSubmit', () => {
+    
+  })
 
   describe('Reactive form', () => {
     it('CHECK the initial values for memberForm', () => {
