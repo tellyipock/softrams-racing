@@ -42,6 +42,12 @@ export class AppService {
       .pipe(catchError(this.handleError));
   }
 
+  deleteMember(memberID: number) {
+    return this.http
+      .post(`${this.api}/deleteMember`, {id: memberID}, this.httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+
   getTeams() {
     return this.http
       .get(`${this.api}/teams`)

@@ -10,6 +10,7 @@ import { Member } from '../app.interfaces';
 export class MembersComponent implements OnInit {
   members = [];
   alertMessage: string | undefined;
+  showAlert = false;
 
   constructor(public appService: AppService, private router: Router) {}
 
@@ -25,5 +26,21 @@ export class MembersComponent implements OnInit {
   openMemberDetails(action: string, member?: Member): void {
     this.router.navigateByUrl('/member-details',
       { state: { 'action': action, 'member': member } });
+  }
+
+  deleteMember(member: Member): void {
+    if(!isNaN(member.id)) {
+      const msg = `Are you sure you want to delete ${member.firstName} ${member.lastName}?`;
+      if(confirm(msg)) {
+        this.appService.deleteMember(member.id)
+          .subscribe(result => {
+            if(result.SUCCESS) {
+              this.alertMessage = `Member ${member.firstName} ${member.lastName} deleted successfully.`;
+              this.appService.getMembers()
+                .subscribe(members => (this.members = members));
+            }
+          })
+      }
+    }
   }
 }

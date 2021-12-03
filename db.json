@@ -47,22 +47,6 @@
       "team": "Formula 2 - Car 63",
       "status": "Active",
       "id": 6
-    },
-    {
-      "firstName": "Test 1111111111111",
-      "lastName": "Test11111111",
-      "jobTitle": "Test1",
-      "team": "Formula 1 - Car 8",
-      "status": "Inactive",
-      "id": 7
-    },
-    {
-      "firstName": "test2",
-      "lastName": "test2",
-      "jobTitle": "test2",
-      "team": "Deutsche Tourenwagen Masters - Car 117",
-      "status": "Inactive",
-      "id": 8
     }
   ],
   "teams": [

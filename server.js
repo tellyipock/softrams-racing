@@ -69,7 +69,7 @@ app.post('/api/addMember', (req, res) => {
 
 app.post('/api/editMember', (req, res) => {
   const memberID = req.body.id;
-  if (isNaN(memberID)) {
+  if(isNaN(memberID)) {
     res.status(200).send({
       'SUCCESS': false,
       'ERROR': 'Member ID not found'
@@ -90,7 +90,20 @@ app.post('/api/editMember', (req, res) => {
       }
     });
   }
-  
+});
+
+app.post('/api/deleteMember', (req, res) => {
+  console.log('deleteMember: ', req.body);
+  const memberID = req.body.id;
+  const options = {
+    url: `http://localhost:3000/members/${memberID}`,
+    method: 'DELETE'
+  }
+  request(options, (err, response, body) => {
+    if (response.statusCode <= 500) {
+      res.status(200).send({'SUCCESS': true});
+    }
+  });
 });
 
 
