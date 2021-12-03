@@ -81,7 +81,7 @@
           Save Member
       </button>
       <button id="edit" *ngIf="(action === 'READ') && member" (click)="editMember(member)"
-        class="btn btn-Info ml-2">
+        class="btn btn-info ml-2">
         Edit Member
       </button>
       <button id="delete" *ngIf="(action !== 'ADD') && member" (click)="deleteMember(member)"

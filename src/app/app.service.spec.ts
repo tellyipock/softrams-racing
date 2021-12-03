@@ -60,7 +60,7 @@ describe('AppService', () => {
     const mockTeams = [
       {
         "id": 1,
-        "teamNameName": "Formula 1 - Car 77"
+        "teamName": "Formula 1 - Car 77"
       }
       , {
         "id": 5,

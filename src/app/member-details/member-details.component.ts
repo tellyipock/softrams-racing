@@ -120,6 +120,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
 
   editMember(member: Member): void {
     this.member = member;
+    this.action = GlobalConstants.Action.Edit;
     this.title = `Edit Member ${member.firstName} ${member.lastName}`;
     this.editMode = true;
     this.memberForm.enable();
