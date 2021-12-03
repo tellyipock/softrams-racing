@@ -1,0 +1,6 @@
+<p *ngIf="message" class="alert alert-warning" role="alert">
+  {{ message }}
+  <button type="button" class="btn btn-light close-button"
+    (click)="message = false">X
+  </button>
+</p>

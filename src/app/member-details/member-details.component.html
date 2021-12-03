@@ -76,9 +76,7 @@
     
     <div class="row mt-2">
       <div class="col-md-8">
-        <p *ngIf="alertMessage" class="alert alert-warning" role="alert">
-          {{ alertMessage }}
-        </p>
+        <app-message [message]="alertMessage"></app-message>
       </div>
       <!--Disable if form is invalid-->
       <div class="col-md-4">
