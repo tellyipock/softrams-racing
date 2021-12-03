@@ -1,12 +1,12 @@
 {
   "members": [
     {
-      "id": 1,
       "firstName": "John",
       "lastName": "Doe",
       "jobTitle": "Driver",
       "team": "Formula 1 - Car 77",
-      "status": "Active"
+      "status": "Active",
+      "id": 1
     },
     {
       "id": 2,
@@ -34,8 +34,8 @@
     },
     {
       "firstName": "Lina",
-      "lastName": "Well",
-      "jobTitle": "N/A",
+      "lastName": "Welsh",
+      "jobTitle": "accountant",
       "team": "Formula 2 - Car 54",
       "status": "Active",
       "id": 5
@@ -47,6 +47,14 @@
       "team": "Formula 2 - Car 63",
       "status": "Active",
       "id": 6
+    },
+    {
+      "firstName": "test",
+      "lastName": "test",
+      "jobTitle": "test",
+      "team": "World Rally Championship - Car 90",
+      "status": "Inactive",
+      "id": 7
     }
   ],
   "teams": [

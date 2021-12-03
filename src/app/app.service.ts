@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Member } from './app.interfaces';
+import { Member } from './shared/app.interfaces';
 
 @Injectable({
   providedIn: 'root'

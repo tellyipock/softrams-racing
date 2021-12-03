@@ -2,8 +2,8 @@ import { Component, OnInit, OnChanges } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppService } from '../app.service';
-import { Member, RouterParams } from '../app.interfaces';
-import { GlobalConstants } from '../global-constants';
+import { Member, RouterParams } from '../shared/app.interfaces';
+import { GlobalConstants } from '../shared/global-constants';
 
 @Component({
   selector: 'app-member-details',
@@ -110,26 +110,27 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
     if(this.action === GlobalConstants.Action.Add) {
       this.appService.addMember(memberData)
         .subscribe((result) => {
-          this.goHome(result, this.action);
+          console.log('addMember', result);
+          this.goHome(result, this.action, memberData);
         });
     }
     else if(this.action === GlobalConstants.Action.Edit) {
       memberData.id = this.member.id;
       this.appService.editMember(memberData)
         .subscribe((result) => {
-          this.goHome(result, this.action);
+          this.goHome(result, this.action, memberData);
         });
     }
   }
 
-  goHome(result, action) {
+  goHome(result, action, member) {
     let msg = '';
     if(result.SUCCESS) {
       if(action === GlobalConstants.Action.Add) {
-        msg = `Member ${this.member.firstName} ${this.member.lastName} successfully added.`;
+        msg = `Member ${member.firstName} ${member.lastName} successfully added.`;
       }
       else if (action === GlobalConstants.Action.Edit) {
-        msg = `Member ${this.member.firstName} ${this.member.lastName} successfully updated.`;
+        msg = `Member ${member.firstName} ${member.lastName} successfully updated.`;
       }
     }
     else {

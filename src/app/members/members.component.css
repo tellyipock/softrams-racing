@@ -1,3 +1,10 @@
 .members-wrapper {
   max-width: 1200px;
 }
+
+.close-button {
+  position: absolute;
+  float: right;
+  top: 5px;
+  right: 5px;
+}
