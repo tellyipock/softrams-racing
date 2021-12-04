@@ -16,10 +16,16 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    const name = localStorage.getItem('username');
+    if(localStorage.getItem('username')) {
+      this.appService.setUsername(name);
+      this.router.navigate(['/members']);
+    }
     this.loginForm = this.fb.group({
       username: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required)
     });
+
   }
 
   login() {

@@ -56,11 +56,9 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
 
   displayForm(): void {
     this.editMode = false;
-    console.log('displayForm, params: ', this.routerParams);
 
     if(!this.routerParams.action) {
-      this.alertMessage = 'No action found.';
-      this.memberForm.disable();
+      this.router.navigate(['/members']);
     }
     else {
       this.action = this.routerParams.action;
@@ -130,11 +128,9 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
   // TODO: Add member to members
   onSubmit(form: FormGroup) {
     let memberData = form.value;
-    console.log('saved member: ', memberData);
     if(this.action === GlobalConstants.Action.Add) {
       this.appService.addMember(memberData)
         .subscribe((result) => {
-          console.log('addMember', result);
           this.goHome(result, this.action, memberData);
         });
     }

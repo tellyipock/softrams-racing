@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
-
+import { AuthGuard } from './auth/auth.guard';
 import { AppService } from './app.service';
 
 import { AppComponent } from './app.component';
@@ -24,11 +24,13 @@ const ROUTES = [
   },
   {
     path: 'members',
-    component: MembersComponent
+    component: MembersComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'member-details',
-    component: MemberDetailsComponent
+    component: MemberDetailsComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'login',

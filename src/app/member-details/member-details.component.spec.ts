@@ -110,16 +110,6 @@ describe('MemberDetailsComponent', () => {
       component.alertMessage = '';
     });
 
-    it('should only update alertMessage if action is empty in router param', () => {
-      component.routerParams = { action: '' };
-      component.displayForm();
-      expect(component.member).toBeUndefined();
-      expect(component.title).toEqual('');
-      expect(component.action).toEqual('');
-      expect(component.editMode).toBeFalsy();
-      expect(component.alertMessage).toEqual('No action found.');
-    });
-
     it('should update title, set form to edit mode, and reset form if action is ADD', () => {
       component.routerParams = {action: 'ADD'};
       component.displayForm();
