@@ -19,15 +19,15 @@ export class AppService {
 
   constructor(private http: HttpClient) {}
 
+  setUsername(name: string) {
+    this.username = name;
+  }
+
   // Returns all members
   getMembers() {
     return this.http
       .get(`${this.api}/members`)
       .pipe(catchError(this.handleError));
-  }
-
-  setUsername(name: string) {
-    this.username = name;
   }
 
   addMember(member: Member) {

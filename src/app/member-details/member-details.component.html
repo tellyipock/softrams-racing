@@ -53,7 +53,8 @@
           />
           <ng-template #dropDown>
             <select id="team" class="custom-select" formControlName="team">
-              <option>{{ selectedTeam }}</option>
+              <option *ngIf="selectedTeam; else choose">{{ selectedTeam }}</option>
+              <ng-template #choose>Choose a team</ng-template>
               <option *ngFor="let option of teams" >
                 {{ option.teamName }}
               </option>
