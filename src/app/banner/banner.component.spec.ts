@@ -8,8 +8,7 @@ import { AppService } from '../app.service';
 describe('BannerComponent', () => {
   let component: BannerComponent;
   let fixture: ComponentFixture<BannerComponent>;
-
-  class mockService {
+  class serviceSpy {
     username: string = 'name 1';
   }
 
@@ -20,7 +19,7 @@ describe('BannerComponent', () => {
         , RouterTestingModule.withRoutes([])
       ],
       providers: [
-        { provide: AppService, useClass: mockService } ]
+        { provide: AppService, useClass: serviceSpy } ]
     })
     .compileComponents();
   }));
