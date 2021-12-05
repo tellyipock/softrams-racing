@@ -93,7 +93,6 @@ app.post('/api/editMember', (req, res) => {
 });
 
 app.post('/api/deleteMember', (req, res) => {
-  console.log('deleteMember: ', req.body);
   const memberID = req.body.id;
   const options = {
     url: `http://localhost:3000/members/${memberID}`,

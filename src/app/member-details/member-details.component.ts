@@ -48,7 +48,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
     this.memberForm = new FormGroup({
       firstName: new FormControl('', [ Validators.required ])
       , lastName: new FormControl('', [ Validators.required ])
-      , jobTitle: new FormControl('', [ Validators.required ])
+      , jobTitle: new FormControl('')
       , team: new FormControl('', [ Validators.required ])
       , status: new FormControl('', [ Validators.required ])
     });

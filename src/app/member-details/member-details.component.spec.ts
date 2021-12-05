@@ -29,7 +29,7 @@ describe('MemberDetailsComponent', () => {
         HttpClientTestingModule,
         RouterTestingModule.withRoutes([
           { path: 'members', component: MemberDetailsComponent }
-         ])
+        ])
       ],
       providers: [
         Location
@@ -48,7 +48,7 @@ describe('MemberDetailsComponent', () => {
   });
 
   it('TEST ngOnInit', async(() => {
-
+    expect(component.loading).toBeTruthy();
   }));
 
   it('TEST #editMember', () => {
@@ -190,11 +190,80 @@ describe('MemberDetailsComponent', () => {
     expect(formElm.queryAll.length).toEqual(1);
   });
 
-  it('Save Member List button should exist', () => {
+  it('should display Save Member button if memberForm is valid and not pristine', () => {
     component.loading = false;
+    component.memberForm.patchValue(mockMember);
     fixture.detectChanges();
     let btn = fixture.debugElement.query(By.css('#save'));
     const btnText = btn.nativeElement.textContent;
     expect(btnText.trim()).toEqual('Save Member');
+  });
+
+  it('Should display Edit Member button if action is \"READ" and member is found', () => {
+    component.loading = false;
+    component.action = 'READ';
+    component.member = mockMember;
+    fixture.detectChanges();
+    let btn = fixture.debugElement.query(By.css('#edit'));
+    const btnText = btn.nativeElement.textContent;
+    expect(btnText.trim()).toEqual('Edit Member');
+  });
+
+  it('Should not display Edit Member button if action is not \"READ"', () => {
+    component.loading = false;
+    component.action = 'ADD';
+    component.member = mockMember;
+    fixture.detectChanges();
+    let btn = fixture.debugElement.query(By.css('#edit'));
+    expect(btn).toBeNull();
+  });
+
+  it('Edit Member button when clicked should call editMember function', () => {
+    spyOn(component, 'editMember');
+    component.loading = false;
+    component.action = 'READ';
+    component.member = mockMember;
+    fixture.detectChanges();
+    let btn = fixture.debugElement.query(By.css('#edit'));
+    btn.nativeElement.click();
+    expect(component.editMember).toHaveBeenCalledWith(mockMember);
+  });
+
+  it('Should not display Edit Member button if member is not found', () => {
+    component.loading = false;
+    component.action = 'READ';
+    component.member = undefined;
+    fixture.detectChanges();
+    let btn = fixture.debugElement.query(By.css('#edit'));
+    expect(btn).toBeNull();
+  });
+
+  it('Should display Delete Member button if action is not \"ADD" and member is found', () => {
+    component.loading = false;
+    component.action = 'Edit';
+    component.member = mockMember;
+    fixture.detectChanges();
+    let btn = fixture.debugElement.query(By.css('#delete'));
+    const btnText = btn.nativeElement.textContent;
+    expect(btnText.trim()).toEqual('Delete Member');
+  });
+
+  it('Delete Member button when clicked should call deleteMember function', () => {
+    spyOn(component, 'deleteMember');
+    component.loading = false;
+    component.action = 'Edit';
+    component.member = mockMember;
+    fixture.detectChanges();
+    let btn = fixture.debugElement.query(By.css('#delete'));
+    btn.nativeElement.click();
+    expect(component.deleteMember).toHaveBeenCalledWith(mockMember);
+  })
+
+  it('Should not display Delete Member button if action is \"ADD"', () => {
+    component.loading = false;
+    component.action = 'Add';
+    fixture.detectChanges();
+    let btn = fixture.debugElement.query(By.css('#delete'));
+    expect(btn).toBeNull();
   });
 });
