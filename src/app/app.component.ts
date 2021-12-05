@@ -7,7 +7,7 @@ import { AppService } from './app.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'softrams-racing';
+  title = 'softrams-racing (Telly Ipock)';
 
   constructor(private appService: AppService) {
   }
