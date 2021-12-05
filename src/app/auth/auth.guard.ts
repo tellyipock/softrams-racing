@@ -18,7 +18,6 @@ export class AuthGuard implements CanActivate {
   }
 
   isLoggedIn(): string | undefined {
-    console.log('isLoggedIn')
     return localStorage.getItem('username');
   }
   
