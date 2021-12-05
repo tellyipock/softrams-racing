@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { MessageComponent } from './message.component';
 
 describe('MessageComponent', () => {
@@ -22,9 +23,17 @@ describe('MessageComponent', () => {
   });
 
   it('add button should set message to false', () => {
+    component.message = 'mock message';
+    fixture.detectChanges();
     let btn = fixture.debugElement.query(By.css('#close'));
     btn.triggerEventHandler('click', null);
-    fixture.detectChanges();
     expect(component.message).toBeFalsy();
+  });
+
+  it('add button should not display there is no message', () => {
+    component.message = '';
+    fixture.detectChanges();
+    let btn = fixture.debugElement.query(By.css('#close'));
+    expect(btn).toBeFalsy();
   });
 });
