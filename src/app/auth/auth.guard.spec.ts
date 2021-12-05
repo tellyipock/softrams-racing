@@ -1,18 +1,18 @@
-import { TestBed, inject } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { TestBed, async, inject } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { AuthGuard } from './auth.guard';
 
 describe('AuthGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([])]
-      , providers: [Router, AuthGuard]
+      providers: [AuthGuard,
+        { provide: Router, useClass: jasmine.createSpy("navigate") }]
     });
   });
 
-  // it('should ...', inject([AuthGuard], (guard: AuthGuard) => {
-  //   expect(guard).toBeTruthy();
-  // }));
+  it('should create', inject([AuthGuard], (guard: AuthGuard) => {
+    expect(guard).toBeTruthy();
+  }));
 
+  
 });

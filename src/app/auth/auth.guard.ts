@@ -6,13 +6,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-
-  constructor(private router: Router) {}
-
+  constructor(public router: Router) {}
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-      // go to login if not authenticated
       if (!this.isLoggedIn()) {
         this.router.navigate(['/login']);
         return false;
@@ -21,6 +18,8 @@ export class AuthGuard implements CanActivate {
   }
 
   isLoggedIn(): string | undefined {
+    console.log('isLoggedIn')
     return localStorage.getItem('username');
   }
+  
 }
