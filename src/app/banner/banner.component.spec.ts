@@ -3,7 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { BannerComponent } from './banner.component';
-import { AppService } from '../app.service';
+import { AppService } from '../shared/app.service';
 
 describe('BannerComponent', () => {
   let component: BannerComponent;

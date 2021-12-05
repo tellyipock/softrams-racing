@@ -11,6 +11,7 @@ import { MessageComponent } from '../shared/message/message.component';
 describe('MemberDetailsComponent', () => {
   let component: MemberDetailsComponent;
   let fixture: ComponentFixture<MemberDetailsComponent>;
+  let routerSpy = { navigate: jasmine.createSpy('navigate') };
 
   const mockMember = {
     "firstName": "John",

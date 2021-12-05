@@ -20,4 +20,11 @@ describe('MessageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('add button should set message to false', () => {
+    let btn = fixture.debugElement.query(By.css('#close'));
+    btn.triggerEventHandler('click', null);
+    fixture.detectChanges();
+    expect(component.message).toBeFalsy();
+  });
 });

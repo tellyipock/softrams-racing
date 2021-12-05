@@ -1,7 +1,7 @@
 import { Component, OnInit, OnChanges } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AppService } from '../app.service';
+import { AppService } from '../shared/app.service';
 import { Member, RouterParams } from '../shared/app.interfaces';
 import { GlobalConstants } from '../shared/global-constants';
 

@@ -1,9 +1,7 @@
-import { TestBed, inject, async } from '@angular/core/testing';
-
-import { AppService } from './app.service';
-
+import { TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
+import { AppService } from './app.service';
 
 const mockMembers = [
   {

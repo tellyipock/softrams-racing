@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AppService } from './app.service';
+import { AppService } from './shared/app.service';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +7,7 @@ import { AppService } from './app.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'softrams-racing (Telly Ipock)';
+  title = 'softrams-racing';
 
   constructor(private appService: AppService) {
   }
