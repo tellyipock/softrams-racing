@@ -55,14 +55,6 @@
       "team": "World Rally Championship - Car 77",
       "status": "Active",
       "id": 7
-    },
-    {
-      "firstName": "test2",
-      "lastName": "sdfsdfd",
-      "jobTitle": null,
-      "team": "World Endurance Championship - Car 5",
-      "status": "Active",
-      "id": 8
     }
   ],
   "teams": [

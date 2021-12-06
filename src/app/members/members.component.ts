@@ -29,18 +29,16 @@ export class MembersComponent implements OnInit {
   }
 
   deleteMember(member: Member): void {
-    if(!isNaN(member.id)) {
-      const msg = `Are you sure you want to delete ${member.firstName} ${member.lastName}?`;
-      if(confirm(msg)) {
-        this.appService.deleteMember(member.id)
-          .subscribe(result => {
-            if(result.SUCCESS) {
-              this.alertMessage = `Member ${member.firstName} ${member.lastName} deleted successfully.`;
-              this.appService.getMembers()
-                .subscribe(members => (this.members = members));
-            }
-          })
-      }
+    const msg = `Are you sure you want to delete ${member.firstName} ${member.lastName}?`;
+    if(confirm(msg)) {
+      this.appService.deleteMember(member.id)
+      .subscribe(result => {
+        if(result.SUCCESS) {
+          this.alertMessage = `Member ${member.firstName} ${member.lastName} deleted successfully.`;
+          this.appService.getMembers()
+            .subscribe(members => (this.members = members));
+        }
+      });
     }
   }
 }
