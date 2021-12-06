@@ -12,8 +12,9 @@ export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router, private appService: AppService) {
-  }
+  constructor(private fb: FormBuilder,
+    private router: Router,
+    private appService: AppService) {}
 
   ngOnInit() {
     const name = localStorage.getItem('username');

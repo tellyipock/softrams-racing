@@ -7,13 +7,10 @@ import { AppService } from './shared/app.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'softrams-racing';
-
-  constructor(private appService: AppService) {
-  }
+  constructor(private appService: AppService) {}
 
   ngOnInit(): void {
-    if (!this.appService.username || this.appService.username.length < 1) {
+    if (!this.appService.username) {
       this.appService.setUsername(localStorage.getItem('username'));
     }
   }
