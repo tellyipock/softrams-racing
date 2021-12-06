@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { RouterTestingModule } from '@angular/router/testing';
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -13,7 +14,6 @@ import { AppService } from '../shared/app.service';
 describe('MemberDetailsComponent', () => {
   let component: MemberDetailsComponent;
   let fixture: ComponentFixture<MemberDetailsComponent>;
-  let routerSpy = { navigate: jasmine.createSpy('navigate') };
   let serviceSpy: jasmine.SpyObj<AppService>;
 
   const mockMember = {
@@ -53,12 +53,15 @@ describe('MemberDetailsComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         HttpClientTestingModule,
-        RouterTestingModule.withRoutes([
-          { path: 'members', component: MemberDetailsComponent }
-        ])
       ],
       providers: [
         Location,
+        {
+          provide: Router, useClass: class {
+            navigateByUrl = jasmine.createSpy('navigateByUrl');
+            navigate = jasmine.createSpy('navigate');
+          }
+        },
         { 
           provide: AppService,
           useValue: jasmine.createSpyObj('AppService', ['getTeams'])
@@ -80,6 +83,7 @@ describe('MemberDetailsComponent', () => {
       window.history.pushState({ action: 'ADD' }, '', '');
       fixture.detectChanges();
     });
+
     it('should create', () => {
       expect(component).toBeTruthy();
     });
@@ -228,6 +232,11 @@ describe('MemberDetailsComponent', () => {
     });
   });
 
+  it('should route to members page if no action is found in router params', () => inject([Router], (router: Router) => {
+      component.displayForm();
+      expect(router.navigate).toHaveBeenCalledWith('/members');
+  }));
+
   describe('#displayForm', () => {
     beforeEach(() => {
       serviceSpy = TestBed.get(AppService);
@@ -319,8 +328,40 @@ describe('MemberDetailsComponent', () => {
     
   });
 
-  it('goHome', () => {
-    
-  })
+  it('#goHome should navigate to members page with the appropriate message', inject([Router], (router: Router) => {
+    let result = { SUCCESS: true };
+    let action = 'ADD';
+    let member = { firstName: 'Alex', lastName: 'Sainz' };
+    component.goHome(result, action, member);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/members',
+      { state: { message: 'Member Alex Sainz successfully added.' } });
+
+    result = { SUCCESS: true };
+    action = 'EDIT';
+    member = { firstName: 'First 1', lastName: 'Last 1' };
+    component.goHome(result, action, member);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/members',
+      { state: { message: 'Member First 1 Last 1 successfully updated.' } });
   
+    result = { SUCCESS: true };
+    action = 'DELETE';
+    member = { firstName: 'First 2', lastName: 'Last 2' };
+    component.goHome(result, action, member);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/members',
+      { state: { message: 'Member First 2 Last 2 successfully deleted.' } });
+  
+    result = { SUCCESS: false };
+    action = 'ADD';
+    component.goHome(result, action, member);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/members',
+      { state: { message: 'Add member failed. Please try again.' } });
+
+    result = { SUCCESS: false };
+    action = 'EDIT';
+    component.goHome(result, action, member);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/members',
+      { state: { message: 'Edit member failed. Please try again.' } });
+  
+    }));
+    
 });
