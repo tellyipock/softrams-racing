@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { LoginComponent } from './login.component';
@@ -11,11 +11,6 @@ describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let serviceSpy: jasmine.SpyObj<AppService>;
-
-  const mockLoginUser = {
-    username: 'John Doe',
-    password: '123456'
-  }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

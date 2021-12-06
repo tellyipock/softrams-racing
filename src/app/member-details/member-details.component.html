@@ -11,7 +11,7 @@
     </div>
   </div>
   <!--Template Driven Form or Model Driven Form? Reactive Form-->
-  <form *ngIf="!loading" id="#memberForm" [formGroup]="memberForm"
+  <form *ngIf="(!loading) ! async" id="#memberForm" [formGroup]="memberForm"
     (ngSubmit)="onSubmit(memberForm)">
     <fieldset>
       <div class="row">

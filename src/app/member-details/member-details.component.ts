@@ -125,7 +125,6 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
     this.selectedTeam = this.member.team;
   }
 
-  // TODO: Add member to members
   onSubmit(form: FormGroup) {
     let memberData = form.value;
     if(this.action === GlobalConstants.Action.Add) {
