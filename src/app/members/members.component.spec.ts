@@ -145,4 +145,21 @@ describe('MembersComponent', () => {
 
     expect(component.openMemberDetails).toHaveBeenCalledWith( 'READ', mockMembers[1] );
   });
+
+  it('#deleteMembers should not delete member if user selects cancel on confirm dialog', () => {
+    spyOn(window, 'confirm').and.returnValue(false);
+    component.deleteMember(mockMember);
+    expect(serviceSpy.deleteMember).not.toHaveBeenCalled();
+  });
+
+  it('#deleteMembers should delete member if user selects confirm on dialog', () => {
+
+  });
+
+  it('#getMembers should update members from service', () => {
+    component.getMembers();
+    expect(serviceSpy.getMembers).toHaveBeenCalled();
+  })
+
+
 });

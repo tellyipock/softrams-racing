@@ -35,10 +35,14 @@ export class MembersComponent implements OnInit {
       .subscribe(result => {
         if(result.SUCCESS) {
           this.alertMessage = `Member ${member.firstName} ${member.lastName} deleted successfully.`;
-          this.appService.getMembers()
-            .subscribe(members => (this.members = members));
+          this.getMembers();
         }
       });
     }
+  }
+
+  getMembers(): void {
+    this.appService.getMembers()
+      .subscribe(members => (this.members = members));
   }
 }
