@@ -12,11 +12,14 @@ export class MembersComponent implements OnInit {
   alertMessage: string | undefined;
   showAlert = false;
 
-  constructor(public appService: AppService, private router: Router) {}
+  constructor(public appService: AppService,
+    private router: Router) {}
 
   ngOnInit(): void {
     const state = window.history.state;
-    this.alertMessage = state.message;
+    if(state.message) {
+      this.alertMessage = state.message;
+    }
     this.appService.getMembers()
       .subscribe(members => (this.members = members));
   }

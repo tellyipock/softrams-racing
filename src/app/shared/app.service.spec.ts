@@ -85,16 +85,41 @@ describe('AppService', () => {
       error: 'test 404 error',
       status: 404, statusText: 'Not Found'
     });
+
+    spyOn(console, 'error');
   
     httpSpy.get.and.returnValue(asyncError(mockError));
   
     service.getMembers().subscribe(
-      () => done.fail('expected an error, not heroes'),
+      () => done.fail('expected an error, not members'),
       error  => {
         expect(error.message).toContain('test 404 error');
+        expect(console.error).toHaveBeenCalledWith('An error occurred: test 404 error');
         done();
       }
-    )
+    );
+  }));
+
+
+  it('#getMembers should return an ErrorEvent when the server returns an ErrorEvent response', async((done: DoneFn) => {
+    const mockError = new HttpErrorResponse({
+      error: new ErrorEvent('test 404 error'),
+      status: 404,
+      statusText: 'Not Found'
+    });
+
+    spyOn(console, 'error');
+  
+    httpSpy.get.and.returnValue(asyncError(mockError));
+  
+    service.getMembers().subscribe(
+      () => done.fail('expected an error, not members'),
+      error  => {
+        expect(error.message).toContain('test 404 error');
+        expect(console.error).toHaveBeenCalledWith('Backend returned code 404, body was: test 404 error');
+        done();
+      }
+    );
   }));
 
   it('#addMember should take a member object, make an http post call, and return an Observable', (done: DoneFn) => {
@@ -113,8 +138,6 @@ describe('AppService', () => {
     expect(httpSpy.post.calls.count()).toBe(1, 'one call');
   });
 
-  
-
   it('#editMember should take a member object, make an http post call, and return an Observable', (done: DoneFn) => {
     const resp = { SUCCESS: true };
 
@@ -130,6 +153,23 @@ describe('AppService', () => {
     expect(httpSpy.post.calls.count()).toBe(1, 'one call');
   });
 
+  it('#editMember should return an error when the server returns an error response', async((done: DoneFn) => {
+    const mockError = new HttpErrorResponse({
+      error: 'test 404 error',
+      status: 404, statusText: 'Not Found'
+    });
+  
+    httpSpy.post.and.returnValue(asyncError(mockError));
+  
+    service.editMember(mockMembers[1]).subscribe(
+      () => done.fail('expected an error'),
+      error  => {
+        expect(error.message).toContain('test 404 error');
+        done();
+      }
+    )
+  }));
+
   it('#deleteMember should take a number, make an http post call, and return an Observable', (done: DoneFn) => {
     const resp = { SUCCESS: true };
 
@@ -144,6 +184,23 @@ describe('AppService', () => {
     );
     expect(httpSpy.post.calls.count()).toBe(1, 'one call');
   });
+
+  it('#deleteMember should return an error when the server returns an error response', async((done: DoneFn) => {
+    const mockError = new HttpErrorResponse({
+      error: 'test 404 error',
+      status: 404, statusText: 'Not Found'
+    });
+  
+    httpSpy.post.and.returnValue(asyncError(mockError));
+  
+    service.deleteMember(1).subscribe(
+      () => done.fail('expected an error'),
+      error  => {
+        expect(error.message).toContain('test 404 error');
+        done();
+      }
+    )
+  }));
 
 
   it('#getTeams should make an http get call and return an Observable', (done: DoneFn) => {
@@ -169,7 +226,7 @@ describe('AppService', () => {
     httpSpy.get.and.returnValue(asyncError(mockError));
   
     service.getTeams().subscribe(
-      () => done.fail('expected an error, not heroes'),
+      () => done.fail('expected an error, not teams'),
       error  => {
         expect(error.message).toContain('test 404 error');
         done();

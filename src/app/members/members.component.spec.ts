@@ -77,8 +77,6 @@ describe('MembersComponent', () => {
         }
       ]
     }).compileComponents();
-
-    window.history.pushState({ message: 'Add member success!' }, '', '');
   }));
 
   beforeEach(() => {
@@ -86,6 +84,8 @@ describe('MembersComponent', () => {
     component = fixture.componentInstance;
     serviceSpy = TestBed.get(AppService);
     serviceSpy.getMembers.and.returnValue(of(mockMembers));
+
+    window.history.pushState({ message: 'Add member success!' }, '', '');
     fixture.detectChanges();
   });
 
@@ -95,7 +95,7 @@ describe('MembersComponent', () => {
 
   it('should update alertMessage with routing param', () => {
     expect(component.alertMessage).toEqual('Add member success!');
-  })
+  });
 
   it('should get members', () => {
     fixture.whenStable().then(() => {
@@ -160,6 +160,14 @@ describe('MembersComponent', () => {
       const tds = Array.from(node.querySelectorAll('td'));
       expect(tds[2].innerHTML.trim()).toEqual(mockMembers[i].lastName);
     });
+  });
+
+  it('should not display data if member is empty', () => {
+    component.members = [];
+    fixture.detectChanges();
+    const compiled = fixture.debugElement.nativeElement;
+    const table = compiled.querySelector('tbody');
+    expect(table.children.length).toEqual(0);
   });
 
   it('add button should call openMemberDetails function when clicked', () => {
