@@ -16,9 +16,7 @@ export class MembersComponent implements OnInit {
 
   ngOnInit(): void {
     const state = window.history.state;
-    if(state.message) {
-      this.alertMessage = state.message;
-    }
+    this.alertMessage = state.message;
     this.appService.getMembers()
       .subscribe(members => (this.members = members));
   }

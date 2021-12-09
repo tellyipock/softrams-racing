@@ -31,12 +31,20 @@ describe('MembersComponent', () => {
     "status": "Active"
   },
   {
-    "id": 3,
+    "id": 2,
     "firstName": "Jeb",
     "lastName": "Jackson",
     "jobTitle": "Reserve Driver",
     "team": "Formula 1 - Car 77",
     "status": "Inactive"
+  },
+  {
+    "id": 3,
+    "firstName": "TestF",
+    "lastName": "TestL",
+    "jobTitle": "Mock Job",
+    "team": "Mock Team",
+    "status": "Active"
   }
 ];
 
@@ -101,7 +109,59 @@ describe('MembersComponent', () => {
       { state: { action: 'ADD', member: mockMember } });
   }));
 
+  it('#deleteMembers should not delete member if user selects cancel on confirm dialog', () => {
+    spyOn(window, 'confirm').and.returnValue(false);
+    component.deleteMember(mockMember);
+    expect(serviceSpy.deleteMember).not.toHaveBeenCalled();
+  });
+
+  it('#deleteMembers should delete member if user selects confirm on dialog', () => {
+    serviceSpy.deleteMember.and.returnValue({
+      subscribe: () => {}
+    });
+    spyOn(window, 'confirm').and.returnValue(true);
+    component.deleteMember(mockMember);
+    expect(serviceSpy.deleteMember).toHaveBeenCalled();
+  });
+
+  it('#deleteMembers should call getMembers if delete is successful', () => {
+    spyOn(window, 'confirm').and.returnValue(true);
+    serviceSpy.deleteMember.and.returnValue({
+      subscribe: () => { return { SUCCESS: true }; }
+    });
+    component.deleteMember(mockMember);
+    expect(serviceSpy.getMembers).toHaveBeenCalled();
+  });
+
+  it('#deleteMembers should NOT call getMembers if delete failed', () => {
+    spyOn(window, 'confirm').and.returnValue(true);
+    spyOn(component, 'getMembers');
+    serviceSpy.deleteMember.and.returnValue({
+      subscribe: () => { return { SUCCESS: false }; }
+    });
+    component.deleteMember(mockMember);
+    expect(component.getMembers).not.toHaveBeenCalled();
+  });
+
+  it('#getMembers should update members from service', () => {
+    component.getMembers();
+    expect(serviceSpy.getMembers).toHaveBeenCalled();
+  });
+
   /* Testing the template */
+
+  it('should display members table', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    const table = compiled.querySelector('tbody');
+    const memberArrayLen = mockMembers.length;
+    expect(table.children.length).toEqual(memberArrayLen);
+
+    Array.from(table.children).forEach((node: HTMLElement, i) => {
+      const tds = Array.from(node.querySelectorAll('td'));
+      expect(tds[2].innerHTML.trim()).toEqual(mockMembers[i].lastName);
+    });
+  });
+
   it('add button should call openMemberDetails function when clicked', () => {
     let btn = fixture.debugElement.query(By.css('#add'));
     spyOn(component, 'openMemberDetails');
@@ -145,21 +205,5 @@ describe('MembersComponent', () => {
 
     expect(component.openMemberDetails).toHaveBeenCalledWith( 'READ', mockMembers[1] );
   });
-
-  it('#deleteMembers should not delete member if user selects cancel on confirm dialog', () => {
-    spyOn(window, 'confirm').and.returnValue(false);
-    component.deleteMember(mockMember);
-    expect(serviceSpy.deleteMember).not.toHaveBeenCalled();
-  });
-
-  it('#deleteMembers should delete member if user selects confirm on dialog', () => {
-
-  });
-
-  it('#getMembers should update members from service', () => {
-    component.getMembers();
-    expect(serviceSpy.getMembers).toHaveBeenCalled();
-  })
-
 
 });
