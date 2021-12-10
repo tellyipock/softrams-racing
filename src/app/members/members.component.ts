@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { concatMap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators'
 import { AppService } from '../shared/app.service';
 import { Member } from '../shared/app.interfaces';
 @Component({
@@ -8,7 +9,8 @@ import { Member } from '../shared/app.interfaces';
   templateUrl: './members.component.html',
   styleUrls: ['./members.component.css']
 })
-export class MembersComponent implements OnInit {
+export class MembersComponent implements OnInit, OnDestroy {
+  private sub = new Subject();
   members = [];
   alertMessage: string | undefined;
   showAlert = false;
@@ -22,7 +24,13 @@ export class MembersComponent implements OnInit {
       this.alertMessage = state.message;
     }
     this.appService.getMembers()
+      .pipe(takeUntil(this.sub))
       .subscribe(members => (this.members = members));
+  }
+
+  ngOnDestroy() {
+    this.sub.next();
+    this.sub.complete();
   }
 
   openMemberDetails(action: string, member?: Member): void {

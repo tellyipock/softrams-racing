@@ -13,14 +13,6 @@ describe('MembersComponent', () => {
   let fixture: ComponentFixture<MembersComponent>;
   let serviceSpy: jasmine.SpyObj<AppService>;
 
-  const serviceStub = {
-    getMembers: () => {
-       return {
-          subscribe: () => {}
-       };
-    },
- };
-
  const mockMembers = [
   {
     "id": 1,
@@ -83,10 +75,6 @@ describe('MembersComponent', () => {
     fixture = TestBed.createComponent(MembersComponent);
     component = fixture.componentInstance;
     serviceSpy = TestBed.get(AppService);
-    // serviceSpy.getMembers.and.returnValue(of(mockMembers));
-
-    // window.history.pushState({ message: 'Add member success!' }, '', '');
-    // fixture.detectChanges();
   });
 
   it('Add Member button should exist', () => {
@@ -99,9 +87,7 @@ describe('MembersComponent', () => {
   describe('no alert message', () => {
     beforeEach(() => {
       window.history.pushState({ }, '', '');
-      serviceSpy.getMembers.and.returnValue({
-        subscribe: () => {}
-      });
+      serviceSpy.getMembers.and.returnValue(of([]));
       fixture.detectChanges();
     });
 
@@ -124,9 +110,7 @@ describe('MembersComponent', () => {
     });
 
     it('members should be empty', () => {
-      serviceSpy.getMembers.and.returnValue({
-        subscribe: () => {}
-      });     
+      serviceSpy.getMembers.and.returnValue(of([]));    
       fixture.detectChanges();
       expect(component.members).toEqual([]);
     })

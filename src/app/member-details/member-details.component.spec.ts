@@ -88,7 +88,7 @@ describe('MemberDetailsComponent', () => {
     expect(formElm).toBeNull();
   })
 
-  describe('ngOnInit', () => {
+  describe('ngOnInit if getTeams successed', () => {
     beforeEach(() => {
       serviceSpy.getTeams.and.returnValue(of(mockTeams));
       window.history.pushState({ action: 'ADD' }, '', '');
