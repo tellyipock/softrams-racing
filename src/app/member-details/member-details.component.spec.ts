@@ -15,12 +15,13 @@ describe('MemberDetailsComponent', () => {
   let fixture: ComponentFixture<MemberDetailsComponent>;
   let serviceSpy: jasmine.SpyObj<AppService>;
 
-  const mockMember = {
-    "firstName": "John",
-    "lastName": "Doe",
-    "jobTitle": "Driver",
-    "team": "Formula 1 - Car 77",
-    "status": "Active"
+  const mockMember = {	
+    id: 2,	
+    firstName: "John",	
+    lastName: "Doe",	
+    jobTitle: "Driver",	
+    team: "Formula 1 - Car 77",	
+    status: "Active"	
   };
 
   const mockTeams = [
@@ -62,8 +63,8 @@ describe('MemberDetailsComponent', () => {
           }
         },
         { 
-          provide: AppService,
-          useValue: jasmine.createSpyObj('AppService', ['getTeams'])
+          provide: AppService,	
+          useValue: jasmine.createSpyObj('AppService', ['getTeams', 'addMember', 'editMember', 'deleteMember'])
         }
       ]
     }).compileComponents();
@@ -72,24 +73,33 @@ describe('MemberDetailsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MemberDetailsComponent);
     component = fixture.componentInstance;
-    
+    serviceSpy = TestBed.get(AppService);
   });
+
+  it('should not displayForm if getTeams failed', () => {
+    spyOn(component, 'displayForm');
+    serviceSpy.getTeams.and.returnValue({
+      subscribe: () => {}
+    });
+    window.history.pushState({ action: 'ADD' }, '', '');
+    fixture.detectChanges();
+    expect(component.displayForm).not.toHaveBeenCalled();
+    let formElm = fixture.debugElement.query(By.css('form'));
+    expect(formElm).toBeNull();
+  })
 
   describe('ngOnInit', () => {
     beforeEach(() => {
-      serviceSpy = TestBed.get(AppService);
       serviceSpy.getTeams.and.returnValue(of(mockTeams));
       window.history.pushState({ action: 'ADD' }, '', '');
       fixture.detectChanges();
-    });
-
-    it('should create', () => {
-      expect(component).toBeTruthy();
     });
   
     it('TEST ngOnInit', async(() => {
       component.ngOnInit();
       expect(component.memberForm).toBeDefined();
+      let formElm = fixture.debugElement.query(By.css('form'));
+      expect(formElm).toBeTruthy();
     }));
   
     it('should call appService.getTeams and update values if success', async(() => {
@@ -128,16 +138,13 @@ describe('MemberDetailsComponent', () => {
       const btnText = btn.nativeElement.textContent;
       expect(btnText.trim()).toEqual('Back to Member List');
     });
-  
-    // it('Back to Member List button should route to /members', inject([Location], (location) => {
-    //   let btn = fixture.debugElement.query(By.css('#back'));   
-    //   btn.nativeElement.click();
-    //   expect(location.path()).toBe('/members');
-    //   fixture.detectChanges();
-    //   fixture.whenStable().then(() => {
-    //     expect(location.path()).toBe('/members');
-    //   });
-    // }));
+  	
+    it('Back to Member List button should route to /members', () => inject([Router], (router: Router) => {	
+      let btn = fixture.debugElement.query(By.css('#back'));   	
+      btn.nativeElement.click();	
+      fixture.detectChanges();	
+      expect(router.url).toBe('members/');	
+    }));
   
     it('form does not displays if loading flag is true', () => {
       component.loading = true;
@@ -229,6 +236,44 @@ describe('MemberDetailsComponent', () => {
       let btn = fixture.debugElement.query(By.css('#delete'));
       expect(btn).toBeNull();
     });
+
+    /* Test form validations */
+    it('should display warning text if firstName is missing', () => {
+      component.loading = false;
+      component.memberForm.patchValue(mockMember);
+      component.memberForm.controls.firstName.setValue('');
+      component.memberForm.controls.firstName.markAsTouched();
+      fixture.detectChanges();
+
+      let element = fixture.debugElement.query(By.css('.warning-text'));
+      const text = element.nativeElement.textContent;
+      expect(text.trim()).toEqual('First name is required.');
+    });
+
+    it('should display warning text if lastName is missing', () => {
+      component.loading = false;
+      component.memberForm.patchValue(mockMember);
+      component.memberForm.controls.lastName.setValue('');
+      component.memberForm.controls.lastName.markAsTouched();
+      fixture.detectChanges();
+
+      let element = fixture.debugElement.query(By.css('.warning-text'));
+      const text = element.nativeElement.textContent;
+      expect(text.trim()).toEqual('Last name is required.');
+    });
+
+    it('should display warning text if status is missing', () => {
+      component.loading = false;
+      component.memberForm.patchValue(mockMember);
+      component.memberForm.controls.status.setValue('');
+      component.memberForm.controls.status.markAsTouched();
+      fixture.detectChanges();
+
+      let element = fixture.debugElement.query(By.css('.warning-text'));
+      const text = element.nativeElement.textContent;
+      expect(text.trim()).toEqual('Please select a status.');
+    });
+
   });
 
   it('should route to members page if no action is found in router params', () => inject([Router], (router: Router) => {
@@ -238,7 +283,6 @@ describe('MemberDetailsComponent', () => {
 
   describe('#displayForm', () => {
     beforeEach(() => {
-      serviceSpy = TestBed.get(AppService);
       serviceSpy.getTeams.and.returnValue(of(mockTeams));
       window.history.pushState({ action: 'ADD' }, '', '');
       fixture.detectChanges();
@@ -298,11 +342,40 @@ describe('MemberDetailsComponent', () => {
       expect(component.editMode).toBeFalsy();
       expect(component.alertMessage).toEqual('No member found.');
     });
-  });
-  
-  it('TEST #deleteMember', () => {
 
   });
+  	
+  it('#deleteMember should not delete member if user selects cancel on confirm dialog', () => {	
+    spyOn(component, 'goHome');	
+    spyOn(window, 'confirm').and.returnValue(false);	
+    component.deleteMember(mockMember);	
+    expect(serviceSpy.deleteMember).not.toHaveBeenCalled();	
+    expect(component.goHome).not.toHaveBeenCalled();	
+  });
+
+  it('#deleteMembers should delete member if user selects confirm on dialog', () => {	
+    spyOn(component, 'goHome');	
+    serviceSpy.deleteMember.and.returnValue({	
+      subscribe: () => { return { SUCCESS: false } }	
+    });
+    
+    spyOn(window, 'confirm').and.returnValue(true);	
+    component.deleteMember(mockMember);	
+    expect(serviceSpy.deleteMember).toHaveBeenCalledWith(mockMember.id);	
+    expect(component.goHome).not.toHaveBeenCalled();	
+    // expect(component.alertMessage).toEqual('Delete failed. Please try again.');	
+  });
+
+  it('#deleteMembers should route to home if delete is successful', () => inject([Router], (router: Router) => {	
+    spyOn(component, 'goHome');	
+    serviceSpy.deleteMember.and.returnValue({	
+      subscribe: () => { return { SUCCESS: true } }	
+    });	
+    spyOn(window, 'confirm').and.returnValue(true);	
+    component.deleteMember(mockMember);	
+    expect(serviceSpy.deleteMember).toHaveBeenCalledWith(mockMember.id);	
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/members');	
+  }));
 
   it('TEST #editMember', () => {
     component.memberForm = mockForm;
@@ -321,10 +394,6 @@ describe('MemberDetailsComponent', () => {
     expect(component.title).toEqual('Edit Member John Doe');
     expect(component.selectedTeam).toEqual(mockMember.team);
     expect(component.memberForm.enabled).toBeTruthy();
-  });
-
-  it('TEST #onSubmit', () => {
-    
   });
 
   it('#goHome should navigate to members page with the appropriate message', inject([Router], (router: Router) => {
@@ -348,7 +417,14 @@ describe('MemberDetailsComponent', () => {
     component.goHome(result, action, member);
     expect(router.navigateByUrl).toHaveBeenCalledWith('/members',
       { state: { message: 'Member First 2 Last 2 successfully deleted.' } });
-  
+
+    result = { SUCCESS: true };
+    action = 'OTHER';
+    member = { firstName: 'First 2', lastName: 'Last 2' };
+    component.goHome(result, action, member);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/members',
+      { state: { message: '' } });
+
     result = { SUCCESS: false };
     action = 'ADD';
     component.goHome(result, action, member);
@@ -360,7 +436,13 @@ describe('MemberDetailsComponent', () => {
     component.goHome(result, action, member);
     expect(router.navigateByUrl).toHaveBeenCalledWith('/members',
       { state: { message: 'Edit member failed. Please try again.' } });
-  
+
+    result = { SUCCESS: false };
+    action = 'DELETE';
+    component.goHome(result, action, member);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/members',
+      { state: { message: '' } });
+
     }));
     
 });
