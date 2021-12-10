@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppService } from '../shared/app.service';
 
@@ -23,10 +23,11 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/members']);
     }
     this.loginForm = this.fb.group({
-      username: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.required)
+      username: new FormControl('', [ Validators.required, Validators.minLength(4) ]),
+      password: new FormControl('', [ 
+        Validators.required,
+        Validators.pattern(/^(?=\D*\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z]).{8,16}$/)])
     });
-
   }
 
   login() {
@@ -34,5 +35,9 @@ export class LoginComponent implements OnInit {
     this.appService.setUsername(this.loginForm.value.username);
     this.router.navigate(['/members']);
   }
+
+  get username() { return this.loginForm.get('username'); }
+
+  get password() { return this.loginForm.get('password'); }
 
 }

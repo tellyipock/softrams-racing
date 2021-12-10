@@ -7,3 +7,9 @@
     margin-left: 0;
     margin-right: 0;
 }
+
+.warning-text p {
+    color: red;
+    text-align: cente;
+    margin-top: 5px;
+}
