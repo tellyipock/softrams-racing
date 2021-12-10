@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { concatMap } from 'rxjs/operators';
 import { AppService } from '../shared/app.service';
 import { Member } from '../shared/app.interfaces';
 @Component({
@@ -38,7 +39,7 @@ export class MembersComponent implements OnInit {
           this.alertMessage = `Member ${member.firstName} ${member.lastName} deleted successfully.`;
           this.getMembers();
         }
-      });
+      });      
     }
   }
 

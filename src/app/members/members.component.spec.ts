@@ -83,135 +83,202 @@ describe('MembersComponent', () => {
     fixture = TestBed.createComponent(MembersComponent);
     component = fixture.componentInstance;
     serviceSpy = TestBed.get(AppService);
-    serviceSpy.getMembers.and.returnValue(of(mockMembers));
+    // serviceSpy.getMembers.and.returnValue(of(mockMembers));
 
-    window.history.pushState({ message: 'Add member success!' }, '', '');
-    fixture.detectChanges();
+    // window.history.pushState({ message: 'Add member success!' }, '', '');
+    // fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should update alertMessage with routing param', () => {
-    expect(component.alertMessage).toEqual('Add member success!');
-  });
-
-  it('should get members', () => {
-    fixture.whenStable().then(() => {
-      expect(component.members).toEqual(mockMembers);
-    });
-  });
-
-  it('#openMemberDetails should route to member-details', inject([Router], (router: Router) => {
-    component.openMemberDetails('ADD', mockMember);
-    expect(router.navigateByUrl).toHaveBeenCalledWith('/member-details',
-      { state: { action: 'ADD', member: mockMember } });
-  }));
-
-  it('#deleteMembers should not delete member if user selects cancel on confirm dialog', () => {
-    spyOn(window, 'confirm').and.returnValue(false);
-    component.deleteMember(mockMember);
-    expect(serviceSpy.deleteMember).not.toHaveBeenCalled();
-  });
-
-  it('#deleteMembers should delete member if user selects confirm on dialog', () => {
-    serviceSpy.deleteMember.and.returnValue({
-      subscribe: () => {}
-    });
-    spyOn(window, 'confirm').and.returnValue(true);
-    component.deleteMember(mockMember);
-    expect(serviceSpy.deleteMember).toHaveBeenCalled();
-  });
-
-  it('#deleteMembers should call getMembers if delete is successful', () => {
-    spyOn(window, 'confirm').and.returnValue(true);
-    serviceSpy.deleteMember.and.returnValue({
-      subscribe: () => { return { SUCCESS: true }; }
-    });
-    component.deleteMember(mockMember);
-    expect(serviceSpy.getMembers).toHaveBeenCalled();
-  });
-
-  it('#deleteMembers should NOT call getMembers if delete failed', () => {
-    spyOn(window, 'confirm').and.returnValue(true);
-    spyOn(component, 'getMembers');
-    serviceSpy.deleteMember.and.returnValue({
-      subscribe: () => { return { SUCCESS: false }; }
-    });
-    component.deleteMember(mockMember);
-    expect(component.getMembers).not.toHaveBeenCalled();
-  });
-
-  it('#getMembers should update members from service', () => {
-    component.getMembers();
-    expect(serviceSpy.getMembers).toHaveBeenCalled();
-  });
-
-  /* Testing the template */
-
-  it('should display members table', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    const table = compiled.querySelector('tbody');
-    const memberArrayLen = mockMembers.length;
-    expect(table.children.length).toEqual(memberArrayLen);
-
-    Array.from(table.children).forEach((node: HTMLElement, i) => {
-      const tds = Array.from(node.querySelectorAll('td'));
-      expect(tds[2].innerHTML.trim()).toEqual(mockMembers[i].lastName);
-    });
-  });
-
-  it('should not display data if member is empty', () => {
-    component.members = [];
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    const table = compiled.querySelector('tbody');
-    expect(table.children.length).toEqual(0);
-  });
-
-  it('add button should call openMemberDetails function when clicked', () => {
+  it('Add Member button should exist', () => {
     let btn = fixture.debugElement.query(By.css('#add'));
-    spyOn(component, 'openMemberDetails');
-    btn.triggerEventHandler('click', null);
-    fixture.detectChanges();
-    expect(component.openMemberDetails).toHaveBeenCalledWith('ADD');
+    const btnText = btn.nativeElement.textContent;
+    expect(btnText.trim()).toEqual('Add Member');
   });
 
-  it('edit button should call openMemberDetails function when clicked', () => {
-    component.members = mockMembers;
-    fixture.detectChanges();
 
-    let btn = fixture.debugElement.queryAll(By.css('.editButton'))[0];
-    spyOn(component, 'openMemberDetails');
-    btn.triggerEventHandler('click', null);
-    fixture.detectChanges();
+  describe('no alert message', () => {
+    beforeEach(() => {
+      window.history.pushState({ }, '', '');
+      serviceSpy.getMembers.and.returnValue({
+        subscribe: () => {}
+      });
+      fixture.detectChanges();
+    });
 
-    expect(component.openMemberDetails).toHaveBeenCalledWith('EDIT', mockMembers[0] );
+    it('should create', () => {
+      expect(component).toBeTruthy();
+    });
+
+    it('should NOT update alertMessage', () => {
+      window.history.pushState({ }, '', '');
+      fixture.detectChanges();
+      expect(component.alertMessage).toBeUndefined();
+    });    
   });
 
-  it('member ID link button should call openMemberDetails function when clicked', () => {
-    component.members = mockMembers;
-    fixture.detectChanges();
+  describe('has alert message', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(MembersComponent);
+      component = fixture.componentInstance;
+      window.history.pushState({ message: 'Add member success!' }, '', '');
+    });
 
-    let btn = fixture.debugElement.queryAll(By.css('.btn-link'))[0];
-    spyOn(component, 'openMemberDetails');
-    btn.triggerEventHandler('click', null);
-    fixture.detectChanges();
+    it('members should be empty', () => {
+      serviceSpy.getMembers.and.returnValue({
+        subscribe: () => {}
+      });     
+      fixture.detectChanges();
+      expect(component.members).toEqual([]);
+    })
 
-    expect(component.openMemberDetails).toHaveBeenCalledWith( 'READ', mockMembers[0] );
-  });
+    describe('has member', () => {
+      beforeEach(() => {
+        serviceSpy.getMembers.and.returnValue(of(mockMembers));     
+        fixture.detectChanges();
+      });
 
-  it('member name link button should call openMemberDetails function when clicked', () => {
-    component.members = mockMembers;
-    fixture.detectChanges();
+      it('should update alertMessage with routing param', () => {
+        expect(component.alertMessage).toEqual('Add member success!');
+      });
+    
+      it('should get members', () => {
+        fixture.whenStable().then(() => {
+          expect(component.members).toEqual(mockMembers);
+        });
+      });
 
-    let btn = fixture.debugElement.queryAll(By.css('.btn-link'))[3];
-    spyOn(component, 'openMemberDetails');
-    btn.triggerEventHandler('click', null);
-    fixture.detectChanges();
+      it('#openMemberDetails should route to member-details', inject([Router], (router: Router) => {
+        component.openMemberDetails('READ', mockMember);
+        expect(router.navigateByUrl).toHaveBeenCalledWith('/member-details',
+          { state: { action: 'READ', member: mockMember } });
+  
+        component.openMemberDetails('ADD');
+        expect(router.navigateByUrl).toHaveBeenCalledWith('/member-details',
+          { state: { action: 'ADD', member: undefined } });
+      }));
+    
+      it('#deleteMembers should not delete member if user selects cancel on confirm dialog', () => {
+        spyOn(window, 'confirm').and.returnValue(false);
+        component.deleteMember(mockMember);
+        expect(serviceSpy.deleteMember).not.toHaveBeenCalled();
+      });
+    
+      it('#deleteMembers should delete member if user selects confirm on dialog', () => {
+        serviceSpy.deleteMember.and.returnValue({
+          subscribe: () => {}
+        });
+        spyOn(window, 'confirm').and.returnValue(true);
+        component.deleteMember(mockMember);
+        expect(serviceSpy.deleteMember).toHaveBeenCalled();
+      });
+    
+      it('#deleteMembers should call getMembers if delete is successful', () => {
+        spyOn(window, 'confirm').and.returnValue(true);
+        serviceSpy.deleteMember.and.returnValue({
+          subscribe: () => { return { SUCCESS: true }; }
+        });
+        component.deleteMember(mockMember);
+        expect(serviceSpy.getMembers).toHaveBeenCalled();
+      });
+    
+      it('#deleteMembers should NOT call getMembers if delete failed', () => {
+        spyOn(window, 'confirm').and.returnValue(true);
+        spyOn(component, 'getMembers');
+        serviceSpy.deleteMember.and.returnValue({
+          subscribe: () => { return { SUCCESS: false }; }
+        });
+        component.deleteMember(mockMember);
+        expect(component.getMembers).not.toHaveBeenCalled();
+      });
+    
+      it('#getMembers should update members from service', () => {
+        component.getMembers();
+        expect(serviceSpy.getMembers).toHaveBeenCalled();
+      });
+  
+      /* Testing the template */
+  
+      it('should display members table', () => {
+        const compiled = fixture.debugElement.nativeElement;
+        const table = compiled.querySelector('tbody');
+        const memberArrayLen = mockMembers.length;
+        expect(table.children.length).toEqual(memberArrayLen);
+  
+        Array.from(table.children).forEach((node: HTMLElement, i) => {
+          const tds = Array.from(node.querySelectorAll('td'));
+          expect(tds[2].innerHTML.trim()).toEqual(mockMembers[i].lastName);
+        });
+      });
+  
+      it('Should show an Edit button', () => {
+        let btn = fixture.debugElement.query(By.css('.editButton'));
+        const btnText = btn.nativeElement.textContent;
+        expect(btnText.trim()).toEqual('Edit');
+      });
+  
+      it('Should show a Delete button', () => {
+        let btn = fixture.debugElement.query(By.css('.deleteButton'));
+        const btnText = btn.nativeElement.textContent;
+        expect(btnText.trim()).toEqual('Delete');
+      });
+  
+      it('should not display data if member is empty', () => {
+        component.members = [];
+        fixture.detectChanges();
+        const compiled = fixture.debugElement.nativeElement;
+        const table = compiled.querySelector('tbody');
+        expect(table.children.length).toEqual(0);
+      });
+  
+      it('add button should call openMemberDetails function when clicked', () => {
+        let btn = fixture.debugElement.query(By.css('#add'));
+        spyOn(component, 'openMemberDetails');
+        btn.triggerEventHandler('click', null);
+        fixture.detectChanges();
+        expect(component.openMemberDetails).toHaveBeenCalledWith('ADD');
+      });
+  
+      it('edit button should call openMemberDetails function when clicked', () => {
+        component.members = mockMembers;
+        fixture.detectChanges();
+  
+        let btn = fixture.debugElement.queryAll(By.css('.editButton'))[0];
+        spyOn(component, 'openMemberDetails');
+        btn.triggerEventHandler('click', null);
+        fixture.detectChanges();
+  
+        expect(component.openMemberDetails).toHaveBeenCalledWith('EDIT', mockMembers[0] );
+      });
+  
+      it('member ID link button should call openMemberDetails function when clicked', () => {
+        component.members = mockMembers;
+        fixture.detectChanges();
+  
+        let btn = fixture.debugElement.queryAll(By.css('.btn-link'))[0];
+        spyOn(component, 'openMemberDetails');
+        btn.triggerEventHandler('click', null);
+        fixture.detectChanges();
+  
+        expect(component.openMemberDetails).toHaveBeenCalledWith( 'READ', mockMembers[0] );
+      });
+  
+      it('member name link button should call openMemberDetails function when clicked', () => {
+        component.members = mockMembers;
+        fixture.detectChanges();
+  
+        let btn = fixture.debugElement.queryAll(By.css('.btn-link'))[3];
+        spyOn(component, 'openMemberDetails');
+        btn.triggerEventHandler('click', null);
+        fixture.detectChanges();
+  
+        expect(component.openMemberDetails).toHaveBeenCalledWith( 'READ', mockMembers[1] );
+      });
+    })
 
-    expect(component.openMemberDetails).toHaveBeenCalledWith( 'READ', mockMembers[1] );
+    
+  
+    
+
   });
 
 });
