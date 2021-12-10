@@ -1,5 +1,5 @@
 import { Component, OnInit, OnChanges } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppService } from '../shared/app.service';
 import { Member, RouterParams } from '../shared/app.interfaces';
@@ -27,6 +27,26 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.loading = true;
     this.initiateForm();
+    this.getTeams();
+  }
+
+  ngOnChanges() {}
+
+  initiateForm() {
+    this.memberForm = new FormGroup({
+      firstName: new FormControl('', [ Validators.required ])
+      , lastName: new FormControl('', [ Validators.required ])
+      , jobTitle: new FormControl('')
+      , team: new FormControl('', [ Validators.required ])
+      , status: new FormControl('', [ Validators.required ])
+    });
+  }
+
+  get f(): { [key: string]: AbstractControl; } {
+    return this.memberForm.controls;
+  }
+
+  getTeams() {
     this.appService.getTeams()
       .subscribe((teams) => {
         if(teams) {
@@ -42,19 +62,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
     });
   }
 
-  ngOnChanges() {}
-
-  initiateForm() {
-    this.memberForm = new FormGroup({
-      firstName: new FormControl('', [ Validators.required ])
-      , lastName: new FormControl('', [ Validators.required ])
-      , jobTitle: new FormControl('')
-      , team: new FormControl('', [ Validators.required ])
-      , status: new FormControl('', [ Validators.required ])
-    });
-  }
-
-  displayForm(): void {
+  displayForm() {
     this.editMode = false;
 
     if(!this.routerParams.action) {

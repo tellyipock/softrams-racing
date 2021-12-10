@@ -11,3 +11,9 @@
   right: 0;
   margin-bottom: 20px;
 }
+
+.warning-text p {
+  color: red;
+  text-align: cente;
+  margin-top: 5px;
+}
