@@ -110,7 +110,7 @@ describe('MembersComponent', () => {
     });
 
     it('members should be empty', () => {
-      serviceSpy.getMembers.and.returnValue(of([]));    
+      serviceSpy.getMembers.and.returnValue(of([]));
       fixture.detectChanges();
       expect(component.members).toEqual([]);
     })
@@ -148,9 +148,7 @@ describe('MembersComponent', () => {
       });
     
       it('#deleteMembers should delete member if user selects confirm on dialog', () => {
-        serviceSpy.deleteMember.and.returnValue({
-          subscribe: () => {}
-        });
+        serviceSpy.deleteMember.and.returnValue(of([ ]));
         spyOn(window, 'confirm').and.returnValue(true);
         component.deleteMember(mockMember);
         expect(serviceSpy.deleteMember).toHaveBeenCalled();
@@ -158,21 +156,9 @@ describe('MembersComponent', () => {
     
       it('#deleteMembers should call getMembers if delete is successful', () => {
         spyOn(window, 'confirm').and.returnValue(true);
-        serviceSpy.deleteMember.and.returnValue({
-          subscribe: () => { return { SUCCESS: true }; }
-        });
+        serviceSpy.deleteMember.and.returnValue(of({ SUCCESS: true }));
         component.deleteMember(mockMember);
         expect(serviceSpy.getMembers).toHaveBeenCalled();
-      });
-    
-      it('#deleteMembers should NOT call getMembers if delete failed', () => {
-        spyOn(window, 'confirm').and.returnValue(true);
-        spyOn(component, 'getMembers');
-        serviceSpy.deleteMember.and.returnValue({
-          subscribe: () => { return { SUCCESS: false }; }
-        });
-        component.deleteMember(mockMember);
-        expect(component.getMembers).not.toHaveBeenCalled();
       });
     
       it('#getMembers should update members from service', () => {

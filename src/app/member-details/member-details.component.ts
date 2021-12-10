@@ -1,6 +1,8 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators'
 import { AppService } from '../shared/app.service';
 import { Member, RouterParams } from '../shared/app.interfaces';
 import { GlobalConstants } from '../shared/global-constants';
@@ -10,7 +12,8 @@ import { GlobalConstants } from '../shared/global-constants';
   templateUrl: './member-details.component.html',
   styleUrls: ['./member-details.component.css']
 })
-export class MemberDetailsComponent implements OnInit, OnChanges {
+export class MemberDetailsComponent implements OnInit, OnDestroy {
+  private sub = new Subject();
   memberForm: FormGroup;
   alertMessage: string;
   teams = [];
@@ -30,7 +33,10 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
     this.getTeams();
   }
 
-  ngOnChanges() {}
+  ngOnDestroy() {
+    this.sub.next();
+    this.sub.complete();
+  }
 
   initiateForm() {
     this.memberForm = new FormGroup({
@@ -48,6 +54,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
 
   getTeams() {
     this.appService.getTeams()
+      .pipe(takeUntil(this.sub))
       .subscribe((teams) => {
         if(teams) {
           this.alertMessage = '';
@@ -112,12 +119,13 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
       const msg = `Are you sure you want to delete ${member.firstName} ${member.lastName}?`;
       if(confirm(msg)) {
         this.appService.deleteMember(member.id)
+          .pipe(takeUntil(this.sub))
           .subscribe(result => {
             if(result.SUCCESS) {
               this.goHome(result, GlobalConstants.Action.Delete, member);
             }
             else {
-              this.alertMessage = `Delete failed. Please try again.`;
+              this.alertMessage = 'Delete failed. Please try again.';
             }
           })
       }
@@ -137,6 +145,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
     let memberData = form.value;
     if(this.action === GlobalConstants.Action.Add) {
       this.appService.addMember(memberData)
+        .pipe(takeUntil(this.sub))
         .subscribe((result) => {
           this.goHome(result, this.action, memberData);
         });
@@ -144,6 +153,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
     else if(this.action === GlobalConstants.Action.Edit) {
       memberData.id = this.member.id;
       this.appService.editMember(memberData)
+        .pipe(takeUntil(this.sub))
         .subscribe((result) => {
           this.goHome(result, this.action, memberData);
         });

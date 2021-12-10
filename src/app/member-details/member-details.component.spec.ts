@@ -76,18 +76,6 @@ describe('MemberDetailsComponent', () => {
     serviceSpy = TestBed.get(AppService);
   });
 
-  it('should not displayForm if getTeams failed', () => {
-    spyOn(component, 'displayForm');
-    serviceSpy.getTeams.and.returnValue({
-      subscribe: () => {}
-    });
-    window.history.pushState({ action: 'ADD' }, '', '');
-    fixture.detectChanges();
-    expect(component.displayForm).not.toHaveBeenCalled();
-    let formElm = fixture.debugElement.query(By.css('form'));
-    expect(formElm).toBeNull();
-  })
-
   describe('ngOnInit if getTeams successed', () => {
     beforeEach(() => {
       serviceSpy.getTeams.and.returnValue(of(mockTeams));
@@ -96,10 +84,12 @@ describe('MemberDetailsComponent', () => {
     });
   
     it('TEST ngOnInit', async(() => {
+      spyOn(component, 'getTeams');
       component.ngOnInit();
       expect(component.memberForm).toBeDefined();
       let formElm = fixture.debugElement.query(By.css('form'));
       expect(formElm).toBeTruthy();
+      expect(component.getTeams).toHaveBeenCalled();
     }));
   
     it('should call appService.getTeams and update values if success', async(() => {
@@ -111,17 +101,6 @@ describe('MemberDetailsComponent', () => {
     }));
 
     /* Testing template */
-    it('CHECK the initial values for memberForm', () => {
-      component.memberForm = mockForm;
-      const initialForm = {
-        firstName: '',
-        lastName: '',
-        jobTitle: '',
-        team: '',
-        status: ''
-      };
-      expect(component.memberForm.value).toEqual(initialForm);
-    });
 
     it('TEST the form group element count', () => {
       component.memberForm = mockForm;
@@ -350,27 +329,24 @@ describe('MemberDetailsComponent', () => {
     spyOn(window, 'confirm').and.returnValue(false);	
     component.deleteMember(mockMember);	
     expect(serviceSpy.deleteMember).not.toHaveBeenCalled();	
-    expect(component.goHome).not.toHaveBeenCalled();	
+    expect(component.goHome).not.toHaveBeenCalled();
+    expect(component.alertMessage).toBeUndefined();
   });
 
-  it('#deleteMembers should delete member if user selects confirm on dialog', () => {	
+  it('#deleteMember should delete member if user selects confirm on dialog', () => {	
     spyOn(component, 'goHome');	
-    serviceSpy.deleteMember.and.returnValue({	
-      subscribe: () => { return { SUCCESS: false } }	
-    });
+    serviceSpy.deleteMember.and.returnValue(of([ ]));
     
     spyOn(window, 'confirm').and.returnValue(true);	
     component.deleteMember(mockMember);	
     expect(serviceSpy.deleteMember).toHaveBeenCalledWith(mockMember.id);	
     expect(component.goHome).not.toHaveBeenCalled();	
-    // expect(component.alertMessage).toEqual('Delete failed. Please try again.');	
+    expect(component.alertMessage).toEqual('Delete failed. Please try again.');	
   });
 
-  it('#deleteMembers should route to home if delete is successful', () => inject([Router], (router: Router) => {	
+  it('#deleteMember should route to home if delete is successful', () => inject([Router], (router: Router) => {	
     spyOn(component, 'goHome');	
-    serviceSpy.deleteMember.and.returnValue({	
-      subscribe: () => { return { SUCCESS: true } }	
-    });	
+    serviceSpy.deleteMember.and.returnValue(of({ SUCCESS: true }));	
     spyOn(window, 'confirm').and.returnValue(true);	
     component.deleteMember(mockMember);	
     expect(serviceSpy.deleteMember).toHaveBeenCalledWith(mockMember.id);	
@@ -444,5 +420,48 @@ describe('MemberDetailsComponent', () => {
       { state: { message: '' } });
 
     }));
+
+    it('#onSubmit should add member', () => {
+      serviceSpy.getTeams.and.returnValue(of(mockTeams));
+      window.history.pushState({ action: 'ADD' }, '', '');
+      
+      spyOn(component, 'goHome');
+      serviceSpy.addMember.and.returnValue(of({ SUCCESS: true }));
+      mockForm.patchValue(mockMember);
+      fixture.detectChanges();
+      component.onSubmit(mockForm);
+      expect(component.action).toEqual('ADD');
+      expect(serviceSpy.addMember).toHaveBeenCalledWith(mockForm.value);
+      expect(component.goHome).toHaveBeenCalledWith({ SUCCESS: true }, 'ADD', mockForm.value);
+    });
+  
+    it('#onSubmit should edit member', () => {
+      serviceSpy.getTeams.and.returnValue(of(mockTeams));
+      window.history.pushState({ action: 'EDIT' }, '', '');
+      
+      spyOn(component, 'goHome');
+      serviceSpy.editMember.and.returnValue(of({ SUCCESS: true }));
+      mockForm.patchValue(mockMember);
+      fixture.detectChanges();
+      component.member = mockMember;
+      component.onSubmit(mockForm);
+      expect(component.action).toEqual('EDIT');
+      expect(serviceSpy.editMember).toHaveBeenCalledWith(mockForm.value);
+      expect(component.goHome).toHaveBeenCalledWith({ SUCCESS: true }, 'EDIT', mockForm.value);
+    });
+  
+    it('#onSubmit should NOT take actions', () => {
+      serviceSpy.getTeams.and.returnValue(of(mockTeams));
+      window.history.pushState({ action: 'READ' }, '', '');
+  
+      spyOn(component, 'goHome');
+      fixture.detectChanges();
+      component.onSubmit(mockForm);
+      expect(component.action).toEqual('READ');
+      expect(serviceSpy.addMember).not.toHaveBeenCalled();
+      expect(serviceSpy.editMember).not.toHaveBeenCalled();
+      expect(component.goHome).not.toHaveBeenCalled();
+    });
+  
     
 });
