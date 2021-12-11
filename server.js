@@ -7,6 +7,7 @@ const path = require('path');
 var xssFilter = require('x-xss-protection');
 var nosniff = require('dont-sniff-mimetype');
 const request = require('request');
+const { check, validationResult } = require('express-validator')
 
 const app = express();
 
@@ -51,20 +52,41 @@ app.get('/api/teams', (req, res) => {
   });
 });
 
-app.post('/api/addMember', (req, res) => {
-  const member = JSON.stringify(req.body);
-  const httpOptions = {
-    url: 'http://localhost:3000/members',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'},
-    body: member
-  };
-  request(httpOptions, (err, response, body) => {
-    if (response.statusCode <= 500) {
-      res.status(200).send({'SUCCESS': true});
-    }
-  });
+app.post('/api/addMember', [
+  check('firstName', 'firstName is required and must be at least 3 letters long.')
+    .exists()
+    .isLength({ min: 3 }),
+  check('lastName', 'firstName is required.')
+    .exists(),
+  check('team', 'team is required.')
+    .exists(),
+  check('status', 'status is required.')
+    .exists()
+], (req, res) => {
+  const errors = validationResult(req);
+  if(errors.isEmpty()) {
+    const member = JSON.stringify(req.body);
+    const httpOptions = {
+      url: 'http://localhost:3000/members',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'},
+      body: member
+    };
+    request(httpOptions, (err, response, body) => {
+      if (response.statusCode <= 500) {
+        res.status(200).send({'SUCCESS': true});
+      }
+    });
+  }
+  else {
+    // return res.status(422).jsonp(errors.array())
+    res.status(200).send({
+      'SUCCESS': false,
+      'ERROR': errors.array()
+    });
+  }
+  
 });
 
 app.post('/api/editMember', (req, res) => {

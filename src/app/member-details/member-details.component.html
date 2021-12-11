@@ -1,14 +1,17 @@
 <div class="container-fluid col-md-6 mb-4">
   <h3 *ngIf="title" class="my-4 text-center lead">{{ title }}</h3>
   <div class="row mb-4">
-    <div class="col-md-8">
+    <div class="col-md-9">
       <app-message [message]="alertMessage"></app-message>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <button routerLink="/members" id="back"
         class="mt-2 btn btn-primary pull-right back-button">Back to Member List
       </button>
     </div>
+  </div>
+  <div *ngIf="loading" id="loading">
+    Loading member data...
   </div>
   <!--Template Driven Form or Model Driven Form? Reactive Form-->
   <form *ngIf="!loading" id="#memberForm" [formGroup]="memberForm"
@@ -58,15 +61,20 @@
             [value]="memberForm.controls.team.value"
             disabled
           />
+          <div *ngIf="(f.team.dirty || f.team.touched) && f.team.invalid" class="warning-text">
+            <p *ngIf="f.team.errors.required">Please select a team.</p>
+          </div>
           <ng-template #dropDown>
             <select id="team" class="custom-select" formControlName="team">
               <option *ngIf="selectedTeam; else choose">{{ selectedTeam }}</option>
-              <ng-template #choose>Choose a team</ng-template>
+              <ng-template #choose>
+                <option>Choose a team</option>
+              </ng-template>
               <option *ngFor="let option of teams" >
                 {{ option.teamName }}
               </option>
             </select>
-          </ng-template>
+          </ng-template>          
         </div>
       </div>
       <br />

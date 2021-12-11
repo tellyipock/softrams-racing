@@ -14,6 +14,7 @@ export class MembersComponent implements OnInit, OnDestroy {
   members = [];
   alertMessage: string | undefined;
   showAlert = false;
+  loading: boolean = false;
 
   constructor(public appService: AppService,
     private router: Router) {}
@@ -23,9 +24,13 @@ export class MembersComponent implements OnInit, OnDestroy {
     if(state.message) {
       this.alertMessage = state.message;
     }
+    this.loading = true;
     this.appService.getMembers()
       .pipe(takeUntil(this.sub))
-      .subscribe(members => (this.members = members));
+      .subscribe(members => {
+        this.loading = false;
+        this.members = members;
+      });
   }
 
   ngOnDestroy() {

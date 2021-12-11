@@ -61,6 +61,7 @@ export class MemberDetailsComponent implements OnInit, OnDestroy {
           this.teams = teams;
           this.routerParams = window.history.state;
           this.displayForm();
+          this.formChange();
         }
         else {
           this.alertMessage = 'Error getting data. Refresh and try again.'
@@ -114,6 +115,12 @@ export class MemberDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
+  formChange() {
+    this.memberForm.get('team').valueChanges.subscribe(val => {
+      this.selectedTeam = val;
+    });
+  }
+
   deleteMember(member: Member): void {
     if(!isNaN(member.id)) {
       const msg = `Are you sure you want to delete ${member.firstName} ${member.lastName}?`;
@@ -142,12 +149,18 @@ export class MemberDetailsComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(form: FormGroup) {
+    this.alertMessage = '';
     let memberData = form.value;
     if(this.action === GlobalConstants.Action.Add) {
       this.appService.addMember(memberData)
         .pipe(takeUntil(this.sub))
         .subscribe((result) => {
-          this.goHome(result, this.action, memberData);
+          if(result.ERROR) {
+            this.updateAlert(this.action, result.ERROR);
+          }
+          else {
+            this.goHome(result, this.action, memberData);
+          }
         });
     }
     else if(this.action === GlobalConstants.Action.Edit) {
@@ -157,6 +170,15 @@ export class MemberDetailsComponent implements OnInit, OnDestroy {
         .subscribe((result) => {
           this.goHome(result, this.action, memberData);
         });
+    }
+  }
+
+  updateAlert(action: string, errorArray: Array<{msg: string}>) {
+    if(errorArray.length > 0) {
+      this.alertMessage = `${action} member server error: `;
+      errorArray.forEach(
+        (err) => this.alertMessage = `${this.alertMessage} "${err.msg}" ` 
+      );
     }
   }
 
