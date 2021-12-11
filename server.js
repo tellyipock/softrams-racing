@@ -89,27 +89,47 @@ app.post('/api/addMember', [
   
 });
 
-app.post('/api/editMember', (req, res) => {
-  const memberID = req.body.id;
-  if(isNaN(memberID)) {
-    res.status(200).send({
-      'SUCCESS': false,
-      'ERROR': 'Member ID not found'
-    });
+app.post('/api/editMember', [
+  check('firstName', 'firstName is required and must be at least 3 letters long.')
+    .exists()
+    .isLength({ min: 3 }),
+  check('lastName', 'firstName is required.')
+    .exists(),
+  check('team', 'team is required.')
+    .exists(),
+  check('status', 'status is required.')
+    .exists()
+], (req, res) => {
+  const errors = validationResult(req);
+  if(errors.isEmpty()) {
+    const memberID = req.body.id;
+    if(isNaN(memberID)) {
+      res.status(200).send({
+        'SUCCESS': false,
+        'ERROR': 'Member ID not found'
+      });
+    }
+    else {
+      const member = JSON.stringify(req.body);
+      const httpOptions = {
+        url: `http://localhost:3000/members/${memberID}`,
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'},
+        body: member
+      };
+      request(httpOptions, (err, response, body) => {
+        if (response.statusCode <= 500) {
+          res.status(200).send({'SUCCESS': true});
+        }
+      });
+    }
   }
   else {
-    const member = JSON.stringify(req.body);
-    const httpOptions = {
-      url: `http://localhost:3000/members/${memberID}`,
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'},
-      body: member
-    };
-    request(httpOptions, (err, response, body) => {
-      if (response.statusCode <= 500) {
-        res.status(200).send({'SUCCESS': true});
-      }
+    // return res.status(422).jsonp(errors.array())
+    res.status(200).send({
+      'SUCCESS': false,
+      'ERROR': errors.array()
     });
   }
 });

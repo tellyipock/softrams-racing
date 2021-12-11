@@ -168,7 +168,12 @@ export class MemberDetailsComponent implements OnInit, OnDestroy {
       this.appService.editMember(memberData)
         .pipe(takeUntil(this.sub))
         .subscribe((result) => {
-          this.goHome(result, this.action, memberData);
+          if(result.ERROR) {
+            this.updateAlert(this.action, result.ERROR);
+          }
+          else {
+            this.goHome(result, this.action, memberData);
+          }
         });
     }
   }
