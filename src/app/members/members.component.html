@@ -11,7 +11,10 @@
     </div>
   </div>
   
-  <table class="table">
+  <div *ngIf="loading" id="loading">
+    Loading members...
+  </div>
+  <table class="table" *ngIf="!loading">
     <thead>
       <tr>
         <th>Member ID</th>

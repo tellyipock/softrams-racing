@@ -35,8 +35,6 @@ describe('MemberDetailsComponent', () => {
     }
   ];
 
-  const disabledForm = { firstName: '', lastName: '', jobTitle: '', team: '', status: '' };
-
   const mockForm = new FormGroup({
     firstName: new FormControl('', [ Validators.required ])
     , lastName: new FormControl('', [ Validators.required ])
@@ -130,6 +128,9 @@ describe('MemberDetailsComponent', () => {
       fixture.detectChanges();
       let formElm = fixture.debugElement.query(By.css('form'));
       expect(formElm).toBeNull();
+      let textElm = fixture.debugElement.query(By.css('#loading'));
+      const loadingtext = textElm.nativeElement.textContent;
+      expect(loadingtext.trim()).toEqual('Loading member data...');
     });
   
     it('form displays if loading flag is false', () => {
@@ -433,6 +434,27 @@ describe('MemberDetailsComponent', () => {
       expect(component.action).toEqual('ADD');
       expect(serviceSpy.addMember).toHaveBeenCalledWith(mockForm.value);
       expect(component.goHome).toHaveBeenCalledWith({ SUCCESS: true }, 'ADD', mockForm.value);
+    });
+
+
+    it('#onSubmit should add member', () => {
+      const mockErrorArray = [
+        {value: 'ab', msg: 'firstName is too short', param: 'firstName'},
+        {value: '', msg: 'team is missing', param: 'team'}
+      ];
+      serviceSpy.getTeams.and.returnValue(of(mockTeams));
+      window.history.pushState({ action: 'ADD' }, '', '');
+      
+      spyOn(component, 'updateAlert');
+      spyOn(component, 'goHome');
+
+      serviceSpy.addMember.and.returnValue(of({ ERROR: mockErrorArray }));
+      mockForm.patchValue(mockMember);
+      fixture.detectChanges();
+      component.onSubmit(mockForm);
+
+      expect(component.updateAlert).toHaveBeenCalledWith('ADD', mockErrorArray);
+      expect(component.goHome).not.toHaveBeenCalled();
     });
   
     it('#onSubmit should edit member', () => {
